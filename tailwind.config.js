@@ -8,13 +8,13 @@ export default {
           primary: '#10B981', // Brighter, more vibrant green
           secondary: '#059669',
           accent: '#34D399',
-          light: '#ECFDF5',
+          light: '#F0FDF4',
           dark: '#064E3B',
           bright: '#00D563', // Life-giving bright green
         },
         glass: {
-          white: 'rgba(255, 255, 255, 0.25)',
-          green: 'rgba(16, 185, 129, 0.15)',
+          white: 'rgba(255, 255, 255, 0.95)',
+          green: 'rgba(16, 185, 129, 0.05)',
         }
       },
       screens: {
@@ -25,10 +25,12 @@ export default {
         'xs': '2px',
       },
       boxShadow: {
-        'medical': '0 4px 14px 0 rgba(16, 185, 129, 0.15)',
-        'medical-lg': '0 10px 25px -3px rgba(16, 185, 129, 0.2), 0 4px 6px -2px rgba(16, 185, 129, 0.1)',
-        'green-glow': '0 0 20px rgba(16, 185, 129, 0.3)',
-        'green-stroke': 'inset 0 0 0 1px rgba(16, 185, 129, 0.3)',
+        'medical': '0 4px 14px 0 rgba(16, 185, 129, 0.1), 0 2px 4px 0 rgba(0, 0, 0, 0.05)',
+        'medical-lg': '0 10px 25px -3px rgba(16, 185, 129, 0.15), 0 4px 6px -2px rgba(16, 185, 129, 0.05)',
+        'green-glow': '0 0 20px rgba(16, 185, 129, 0.2)',
+        'green-stroke': 'inset 0 0 0 1px rgba(16, 185, 129, 0.2)',
+        'white-glow': '0 4px 20px rgba(255, 255, 255, 0.8)',
+        'soft': '0 2px 8px rgba(0, 0, 0, 0.08)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

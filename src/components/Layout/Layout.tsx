@@ -48,7 +48,7 @@ const Layout: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-medical-light overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       {/* Desktop Sidebar - Hidden on mobile, shown on larger screens */}
       <div className="hidden lg:block">
         <Sidebar />
@@ -85,7 +85,7 @@ const Layout: React.FC = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header onMenuToggle={toggleMobileMenu} isMobileMenuOpen={isMobileMenuOpen} />
         <main className="flex-1 overflow-y-auto">
-          <div className="p-3 sm:p-4 lg:p-6 max-w-7xl mx-auto">
+          <div className="p-3 sm:p-4 lg:p-6 max-w-7xl mx-auto bg-gray-50 min-h-full">
             <Outlet />
           </div>
         </main>

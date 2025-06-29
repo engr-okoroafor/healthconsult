@@ -34,7 +34,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="w-80 h-full backdrop-blur-md bg-glass-white border-r border-white/20 shadow-medical flex flex-col"
+      className="w-80 h-full bg-white border-r border-gray-200 shadow-lg flex flex-col"
     >
       {/* Mobile Close Button */}
       {onClose && (
@@ -49,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       )}
 
       {/* Logo Section */}
-      <div className="flex items-center px-6 py-6">
+      <div className="flex items-center px-6 py-6 border-b border-gray-100">
         <div className="flex items-center space-x-3">
           <div className="p-3 bg-gradient-to-br from-medical-primary to-medical-secondary rounded-xl shadow-medical">
             <Heart className="h-6 w-6 text-white" />
@@ -71,8 +71,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
             className={({ isActive }) =>
               `group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 ${
                 isActive
-                  ? 'bg-gradient-to-r from-medical-primary to-medical-secondary text-white shadow-medical border border-medical-primary/30'
-                  : 'text-gray-700 hover:bg-white/50 hover:text-medical-primary border border-transparent hover:border-white/30 hover:shadow-green-stroke'
+                  ? 'bg-gradient-to-r from-medical-primary to-medical-secondary text-white shadow-lg'
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-medical-primary border border-transparent hover:border-gray-200'
               }`
             }
           >
@@ -92,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
 
       {/* Status Section */}
       <div className="p-4">
-        <div className="backdrop-blur-sm bg-medical-light/30 rounded-xl p-4 border border-medical-primary/20 shadow-medical">
+        <div className="bg-medical-light rounded-xl p-4 border border-medical-primary/20 shadow-soft">
           <div className="flex items-center space-x-2 mb-2">
             <Activity className="h-4 w-4 text-medical-primary animate-pulse" />
             <span className="text-sm font-medium text-gray-800">AI Status</span>

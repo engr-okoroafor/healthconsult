@@ -62,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMobileMenuOpen }) => {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="backdrop-blur-md bg-glass-white border-b-2 border-medical-primary/20 shadow-medical relative z-40"
+      className="bg-white border-b border-gray-200 shadow-sm relative z-40"
     >
       <div className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4">
         {/* Left Section with Hamburger Menu */}
@@ -70,7 +70,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMobileMenuOpen }) => {
           {/* Hamburger Menu - Only visible on mobile/tablet */}
           <button
             onClick={onMenuToggle}
-            className="lg:hidden p-2 text-gray-800 hover:text-medical-primary transition-colors rounded-lg hover:bg-white/40 border-2 border-transparent hover:border-white/30"
+            className="lg:hidden p-2 text-gray-800 hover:text-medical-primary transition-colors rounded-lg hover:bg-gray-50"
           >
             {isMobileMenuOpen ? (
               <X className="h-5 w-5" />
@@ -86,12 +86,12 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMobileMenuOpen }) => {
               placeholder="Search symptoms, conditions..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-12 py-2 sm:py-2.5 bg-white/70 border-2 border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-primary/30 focus:border-medical-primary transition-all duration-300 backdrop-blur-sm text-sm placeholder:text-gray-500 text-gray-800"
+              className="w-full pl-10 pr-12 py-2 sm:py-2.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-primary/30 focus:border-medical-primary transition-all duration-300 text-sm placeholder:text-gray-500 text-gray-800 shadow-sm"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-medical-primary pointer-events-none" />
             <button
               type="submit"
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 text-medical-primary hover:text-medical-secondary transition-colors rounded-lg hover:bg-white/40"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 text-medical-primary hover:text-medical-secondary transition-colors rounded-lg hover:bg-gray-50"
             >
               <Settings className="h-4 w-4" />
             </button>
@@ -101,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMobileMenuOpen }) => {
         {/* Right Section */}
         <div className="flex items-center space-x-2 sm:space-x-4">
           {/* Location - Hidden on mobile */}
-          <div className="hidden md:flex items-center space-x-2 text-xs sm:text-sm text-gray-700 bg-white/40 px-3 py-2 rounded-lg border-2 border-white/30">
+          <div className="hidden md:flex items-center space-x-2 text-xs sm:text-sm text-gray-700 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
             <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-medical-primary" />
             <span>Community Health Center</span>
           </div>
@@ -110,7 +110,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMobileMenuOpen }) => {
           <div className="relative" ref={notificationRef}>
             <button 
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 text-medical-primary hover:text-medical-secondary transition-colors rounded-lg hover:bg-white/40 border-2 border-transparent hover:border-white/30"
+              className="relative p-2 text-medical-primary hover:text-medical-secondary transition-colors rounded-lg hover:bg-gray-50"
             >
               <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
               {unreadCount > 0 && (
@@ -129,7 +129,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMobileMenuOpen }) => {
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-medical-lg border-2 border-medical-primary/20 z-[100] overflow-hidden"
                 >
-                  <div className="p-4 border-b-2 border-gray-100 bg-medical-light/20">
+                  <div className="p-4 border-b border-gray-100 bg-gray-50">
                     <div className="flex items-center justify-between">
                       <h3 className="font-semibold text-gray-800">Notifications</h3>
                       {unreadCount > 0 && (
@@ -147,7 +147,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMobileMenuOpen }) => {
                       <div
                         key={notification.id}
                         className={`p-4 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors ${
-                          !notification.read ? 'bg-medical-light/20 border-l-4 border-l-medical-primary' : ''
+                          !notification.read ? 'bg-blue-50 border-l-4 border-l-medical-primary' : ''
                         }`}
                         onClick={() => markAsRead(notification.id)}
                       >
@@ -183,7 +183,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMobileMenuOpen }) => {
             {/* Logout */}
             <button
               onClick={logout}
-              className="p-2 text-medical-primary hover:text-red-500 transition-colors rounded-lg hover:bg-white/40 border-2 border-transparent hover:border-white/30"
+              className="p-2 text-medical-primary hover:text-red-500 transition-colors rounded-lg hover:bg-gray-50"
               title="Logout"
             >
               <LogOut className="h-4 w-4" />
@@ -194,7 +194,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMobileMenuOpen }) => {
 
       {/* Mobile User Info Bar */}
       <div className="sm:hidden px-3 pb-3">
-        <div className="flex items-center justify-between bg-white/40 rounded-lg px-3 py-2 border-2 border-white/30">
+        <div className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2 border border-gray-200">
           <div className="flex items-center space-x-2">
             <User className="h-4 w-4 text-medical-primary" />
             <span className="text-sm font-medium text-gray-800">{user?.name || 'Community User'}</span>

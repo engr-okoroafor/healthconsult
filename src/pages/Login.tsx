@@ -78,13 +78,13 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Mail className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 bg-gradient-to-r from-medical-primary to-medical-secondary rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Heart className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
               {isLogin ? 'Welcome Back' : 'Create Account'}
@@ -190,7 +190,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-full bg-gradient-to-r from-medical-primary to-medical-secondary text-white py-3 px-4 rounded-lg font-medium hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-medical-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -209,7 +209,7 @@ export default function Login() {
               {isLogin ? "Don't have an account?" : "Already have an account?"}
               <button
                 onClick={toggleMode}
-                className="ml-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                className="ml-2 text-medical-primary hover:text-medical-secondary font-medium transition-colors"
               >
                 {isLogin ? 'Sign Up' : 'Sign In'}
               </button>
