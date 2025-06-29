@@ -1,0 +1,128 @@
+name: Deploy Medical Image Analysis Platform
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  PROJECT_ID: medical-image-analysis
+  REGION: us-central1
+  REGISTRY: us-central1-docker.pkg.dev
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Run frontend tests
+        run: npm run lint
+
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Build backend
+        run: |
+          cd backend
+          npm run build
+
+  build-and-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGISTRY }}
+
+      - name: Build and push backend image
+        run: |
+          cd backend
+          docker build -t ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/medical-analysis/backend:${{ github.sha }} .
+          docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/medical-analysis/backend:${{ github.sha }}
+          
+          # Tag as latest
+          docker tag ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/medical-analysis/backend:${{ github.sha }} \
+                     ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/medical-analysis/backend:latest
+          docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/medical-analysis/backend:latest
+
+      - name: Build and push frontend image
+        run: |
+          docker build -t ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/medical-analysis/frontend:${{ github.sha }} .
+          docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/medical-analysis/frontend:${{ github.sha }}
+          
+          # Tag as latest
+          docker tag ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/medical-analysis/frontend:${{ github.sha }} \
+                     ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/medical-analysis/frontend:latest
+          docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/medical-analysis/frontend:latest
+
+      - name: Deploy to Cloud Run
+        run: |
+          # Deploy backend
+          gcloud run deploy medical-analysis-backend \
+            --image ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/medical-analysis/backend:${{ github.sha }} \
+            --region ${{ env.REGION }} \
+            --platform managed \
+            --allow-unauthenticated \
+            --memory 4Gi \
+            --cpu 2 \
+            --max-instances 10 \
+            --set-env-vars NODE_ENV=production,GOOGLE_CLOUD_PROJECT_ID=${{ env.PROJECT_ID }}
+          
+          # Deploy frontend
+          gcloud run deploy medical-analysis-frontend \
+            --image ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/medical-analysis/frontend:${{ github.sha }} \
+            --region ${{ env.REGION }} \
+            --platform managed \
+            --allow-unauthenticated \
+            --memory 1Gi \
+            --cpu 1
+
+      - name: Run Terraform (Infrastructure Updates)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd infra
+          terraform init
+          terraform plan -var="project_id=${{ env.PROJECT_ID }}" -var="region=${{ env.REGION }}"
+          terraform apply -auto-approve -var="project_id=${{ env.PROJECT_ID }}" -var="region=${{ env.REGION }}"
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run security audit
+        run: |
+          npm audit --audit-level high
+          cd backend && npm audit --audit-level high
+
+      - name: Scan for secrets
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD

@@ -1,0 +1,9 @@
+# Copy this file to terraform.tfvars and update with your values
+
+project_id  = "medical-image-analysis"
+region      = "us-central1"
+environment = "dev"
+
+# Additional configuration can be added here
+# mongodb_uri = "mongodb+srv://username:password@cluster.mongodb.net/medical-analysis"
+# gemini_api_key = "your-gemini-api-key"
