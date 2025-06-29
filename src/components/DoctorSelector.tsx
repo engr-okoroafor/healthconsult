@@ -31,9 +31,71 @@ const DoctorSelector: React.FC<DoctorSelectorProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  // Comprehensive list of medical specialties with appropriate icons
+  const specialtyIcons: { [key: string]: string } = {
+    'General Physician': '🩺',
+    'Pediatrician': '👶',
+    'Dermatologist': '🧴',
+    'Neurologist': '🧠',
+    'Geriatrician': '👴',
+    'Allergist/Immunologist': '🤧',
+    'Anesthesiologist': '💉',
+    'Cardiologist': '❤️',
+    'Endocrinologist': '🔬',
+    'Emergency Medicine Physician': '🚨',
+    'Gastroenterologist': '🫃',
+    'Hematologist': '🩸',
+    'Infectious Disease Physician': '🦠',
+    'Nephrologist': '🫘',
+    'Oncologist': '🎗️',
+    'Pathologist': '🔬',
+    'Physiatrist': '🏃',
+    'Psychiatrist': '🧘',
+    'Pulmonologist': '🫁',
+    'Radiologist': '📱',
+    'Rheumatologist': '🦴',
+    'General Surgeon': '🔪',
+    'Orthopedic Surgeon': '🦴',
+    'Neurosurgeon': '🧠',
+    'Cardiothoracic Surgeon': '❤️',
+    'Plastic Surgeon': '✨',
+    'Ophthalmologist': '👁️',
+    'Otolaryngologist': '👂',
+    'Urologist': '🫘',
+    'Colon and Rectal Surgeon': '🫃',
+    'Obstetrician/Gynecologist': '🤱'
+  };
+
+  // Create comprehensive doctor list if not provided
+  const comprehensiveDoctors = doctors.length > 0 ? doctors : [
+    // Primary Care & General
+    { id: '1', name: 'Dr. Sarah Johnson', specialty: 'General Physician', description: 'Primary care and general health management', icon: specialtyIcons['General Physician'], tavus_replica_id: 'rb17cf590e15', tavus_persona_id: 'pdcdad5c5f0e', is_premium: false, is_available: true },
+    
+    // Medical Specialties
+    { id: '2', name: 'Dr. Michael Chen', specialty: 'Cardiologist', description: 'Heart and cardiovascular system specialist', icon: specialtyIcons['Cardiologist'], tavus_replica_id: 'rb17cf590e16', tavus_persona_id: 'pdcdad5c5f1e', is_premium: true, is_available: true },
+    { id: '3', name: 'Dr. Emily Rodriguez', specialty: 'Dermatologist', description: 'Skin, hair, and nail conditions specialist', icon: specialtyIcons['Dermatologist'], tavus_replica_id: 'rb17cf590e17', tavus_persona_id: 'pdcdad5c5f2e', is_premium: true, is_available: true },
+    { id: '4', name: 'Dr. James Wilson', specialty: 'Neurologist', description: 'Brain and nervous system disorders specialist', icon: specialtyIcons['Neurologist'], tavus_replica_id: 'rb17cf590e18', tavus_persona_id: 'pdcdad5c5f3e', is_premium: true, is_available: true },
+    { id: '5', name: 'Dr. Lisa Thompson', specialty: 'Pediatrician', description: 'Children and adolescent health specialist', icon: specialtyIcons['Pediatrician'], tavus_replica_id: 'rb17cf590e19', tavus_persona_id: 'pdcdad5c5f4e', is_premium: true, is_available: true },
+    { id: '6', name: 'Dr. Robert Kim', specialty: 'Geriatrician', description: 'Elderly care and age-related conditions', icon: specialtyIcons['Geriatrician'], tavus_replica_id: 'rb17cf590e20', tavus_persona_id: 'pdcdad5c5f5e', is_premium: true, is_available: true },
+    { id: '7', name: 'Dr. Amanda Davis', specialty: 'Allergist/Immunologist', description: 'Allergies and immune system disorders', icon: specialtyIcons['Allergist/Immunologist'], tavus_replica_id: 'rb17cf590e21', tavus_persona_id: 'pdcdad5c5f6e', is_premium: true, is_available: true },
+    { id: '8', name: 'Dr. David Martinez', specialty: 'Endocrinologist', description: 'Hormones and metabolic disorders', icon: specialtyIcons['Endocrinologist'], tavus_replica_id: 'rb17cf590e22', tavus_persona_id: 'pdcdad5c5f7e', is_premium: true, is_available: true },
+    { id: '9', name: 'Dr. Jennifer Lee', specialty: 'Gastroenterologist', description: 'Digestive system and GI tract specialist', icon: specialtyIcons['Gastroenterologist'], tavus_replica_id: 'rb17cf590e23', tavus_persona_id: 'pdcdad5c5f8e', is_premium: true, is_available: true },
+    { id: '10', name: 'Dr. Mark Brown', specialty: 'Pulmonologist', description: 'Lungs and respiratory system specialist', icon: specialtyIcons['Pulmonologist'], tavus_replica_id: 'rb17cf590e24', tavus_persona_id: 'pdcdad5c5f9e', is_premium: true, is_available: true },
+    { id: '11', name: 'Dr. Rachel Green', specialty: 'Psychiatrist', description: 'Mental health and psychiatric disorders', icon: specialtyIcons['Psychiatrist'], tavus_replica_id: 'rb17cf590e25', tavus_persona_id: 'pdcdad5c5f10e', is_premium: true, is_available: true },
+    { id: '12', name: 'Dr. Alex Thompson', specialty: 'Radiologist', description: 'Medical imaging and diagnostic radiology', icon: specialtyIcons['Radiologist'], tavus_replica_id: 'rb17cf590e26', tavus_persona_id: 'pdcdad5c5f11e', is_premium: true, is_available: true },
+    
+    // Surgical Specialties
+    { id: '13', name: 'Dr. Steven Clark', specialty: 'General Surgeon', description: 'General surgical procedures and operations', icon: specialtyIcons['General Surgeon'], tavus_replica_id: 'rb17cf590e27', tavus_persona_id: 'pdcdad5c5f12e', is_premium: true, is_available: true },
+    { id: '14', name: 'Dr. Maria Garcia', specialty: 'Orthopedic Surgeon', description: 'Bones, joints, and musculoskeletal system', icon: specialtyIcons['Orthopedic Surgeon'], tavus_replica_id: 'rb17cf590e28', tavus_persona_id: 'pdcdad5c5f13e', is_premium: true, is_available: true },
+    { id: '15', name: 'Dr. Kevin White', specialty: 'Neurosurgeon', description: 'Brain and spinal cord surgery specialist', icon: specialtyIcons['Neurosurgeon'], tavus_replica_id: 'rb17cf590e29', tavus_persona_id: 'pdcdad5c5f14e', is_premium: true, is_available: true },
+    { id: '16', name: 'Dr. Nicole Adams', specialty: 'Ophthalmologist', description: 'Eye surgery and vision specialist', icon: specialtyIcons['Ophthalmologist'], tavus_replica_id: 'rb17cf590e30', tavus_persona_id: 'pdcdad5c5f15e', is_premium: true, is_available: true },
+    { id: '17', name: 'Dr. Thomas Miller', specialty: 'Urologist', description: 'Urinary tract and male reproductive system', icon: specialtyIcons['Urologist'], tavus_replica_id: 'rb17cf590e31', tavus_persona_id: 'pdcdad5c5f16e', is_premium: true, is_available: true },
+    { id: '18', name: 'Dr. Laura Wilson', specialty: 'Obstetrician/Gynecologist', description: 'Women\'s reproductive health specialist', icon: specialtyIcons['Obstetrician/Gynecologist'], tavus_replica_id: 'rb17cf590e32', tavus_persona_id: 'pdcdad5c5f17e', is_premium: true, is_available: true }
+  ];
+
   // Filter doctors to show default specialty first
-  const defaultDoctor = doctors.find(d => d.specialty === defaultSpecialty);
-  const otherDoctors = doctors.filter(d => d.specialty !== defaultSpecialty);
+  const defaultDoctor = comprehensiveDoctors.find(d => d.specialty === defaultSpecialty);
+  const otherDoctors = comprehensiveDoctors.filter(d => d.specialty !== defaultSpecialty);
 
   // Set default doctor if none selected
   React.useEffect(() => {
@@ -50,7 +112,7 @@ const DoctorSelector: React.FC<DoctorSelectorProps> = ({
   return (
     <div className={`relative ${className}`}>
       {/* Selected Doctor Display */}
-      <div className="backdrop-blur-md bg-glass-white rounded-2xl border-2 border-medical-primary/20 shadow-medical p-4">
+      <div className="bg-white rounded-2xl border-2 border-medical-primary/20 shadow-lg p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="text-2xl">{selectedDoctor?.icon || '👨‍⚕️'}</div>
@@ -93,9 +155,9 @@ const DoctorSelector: React.FC<DoctorSelectorProps> = ({
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            className="absolute top-full left-0 right-0 mt-2 z-50"
+            className="absolute top-full left-0 right-0 mt-2 z-50 max-h-96 overflow-y-auto"
           >
-            <div className="backdrop-blur-md bg-white rounded-2xl border-2 border-medical-primary/20 shadow-medical overflow-hidden">
+            <div className="bg-white rounded-2xl border-2 border-medical-primary/20 shadow-lg overflow-hidden">
               {/* Default Doctor */}
               {defaultDoctor && (
                 <div>
@@ -134,7 +196,7 @@ const DoctorSelector: React.FC<DoctorSelectorProps> = ({
               {otherDoctors.length > 0 && (
                 <div>
                   <div className="px-4 py-2 bg-gray-50 border-b border-gray-200">
-                    <span className="text-xs font-medium text-gray-600">Other Specialists</span>
+                    <span className="text-xs font-medium text-gray-600">All Specialists</span>
                   </div>
                   {otherDoctors.map((doctor) => (
                     <button

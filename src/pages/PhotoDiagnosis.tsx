@@ -23,6 +23,7 @@ import PurchaseModal from '../components/PurchaseModal';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { tavusService } from '../services/tavusService';
+import { aiService } from '../services/aiService';
 import toast from 'react-hot-toast';
 
 interface Doctor {
@@ -62,15 +63,16 @@ const PhotoDiagnosis: React.FC = () => {
 
       if (error) throw error;
       
-      // Filter for General Physician and Radiologist
+      // Filter for Radiologist and General Physician
       const filteredDoctors = (data || []).filter((doc: any) => 
-        doc.specialty === 'General Practitioner' || doc.specialty === 'Radiologist'
+        doc.specialty === 'General Physician' || doc.specialty === 'Radiologist'
       );
       
       setDoctors(filteredDoctors);
       
-      // Set General Physician as default
-      const defaultDoctor = filteredDoctors.find((doc: any) => doc.specialty === 'General Practitioner');
+      // Set Radiologist as default for photo diagnosis
+      const defaultDoctor = filteredDoctors.find((doc: any) => doc.specialty === 'Radiologist') ||
+                           filteredDoctors.find((doc: any) => doc.specialty === 'General Physician');
       if (defaultDoctor) {
         setSelectedDoctor(defaultDoctor);
       }
@@ -148,101 +150,88 @@ const PhotoDiagnosis: React.FC = () => {
   };
 
   const handleAnalyze = async () => {
-    if (uploadedImages.length === 0) return;
+    if (uploadedImages.length === 0) {
+      toast.error('Please upload at least one image');
+      return;
+    }
+
+    if (!selectedBodyPart || !imageType) {
+      toast.error('Please select body part and image type');
+      return;
+    }
 
     setIsAnalyzing(true);
     
-    // Check if AI service is configured
-    const hasApiKey = import.meta.env.VITE_GEMINI_API_KEY || 
-                     import.meta.env.VITE_OPENAI_API_KEY ||
-                     localStorage.getItem('gemini_api_key') || 
-                     localStorage.getItem('openai_api_key');
-    
-    if (hasApiKey) {
-      // Use real AI analysis
-      setTimeout(() => {
-        const realDiagnosis = {
-          condition: 'AI-Powered Visual Analysis',
-          confidence: 85,
-          description: 'Based on advanced computer vision analysis of the uploaded medical image, the AI has identified key features and patterns.',
-          severity: 'mild',
-          anomalyDetected: true,
-          naturalRemedies: [
-            'Rest and adequate sleep for healing',
-            'Apply natural anti-inflammatory remedies',
-            'Maintain proper hygiene and care',
-            'Use gentle, natural treatments',
-            'Monitor symptoms and progress'
-          ],
-          foods: [
-            'Anti-inflammatory foods: turmeric, ginger',
-            'Vitamin-rich fruits and vegetables',
-            'Lean proteins for healing',
-            'Adequate hydration',
-            'Avoid processed foods'
-          ],
-          medications: [
-            'Over-the-counter pain relief as needed',
-            'Topical treatments as appropriate',
-            'Consult healthcare provider for prescriptions'
-          ],
-          exercises: [
-            'Gentle movement as tolerated',
-            'Breathing exercises for relaxation',
-            'Light stretching',
-            'Gradual return to normal activity'
-          ],
-          administration: [
-            'Follow healthcare provider instructions',
-            'Take medications as prescribed',
-            'Apply treatments consistently',
-            'Monitor for changes or improvements'
-          ],
-          prevention: [
-            'Maintain healthy lifestyle habits',
-            'Regular medical check-ups',
-            'Avoid known triggers',
-            'Practice preventive care'
-          ],
-          warning: 'This is AI analysis for informational purposes. Always consult with a qualified healthcare professional for proper diagnosis and treatment.',
-          treatmentPlan: {
-            phase1: 'Immediate relief (Days 1-3)',
-            phase2: 'Healing phase (Days 4-7)',
-            phase3: 'Recovery and prevention (Week 2+)'
+    try {
+      if (aiService.isConfigured()) {
+        // Convert image to base64
+        const file = uploadedImages[0];
+        const reader = new FileReader();
+        
+        reader.onload = async (e) => {
+          try {
+            const base64 = e.target?.result as string;
+            const base64Data = base64.split(',')[1]; // Remove data:image/jpeg;base64, prefix
+            
+            const result = await aiService.analyzeImage(
+              base64Data,
+              selectedDoctor?.specialty || 'Radiologist',
+              [selectedBodyPart],
+              imageType
+            );
+            
+            setDiagnosis(result);
+            toast.success('Image analysis completed!');
+          } catch (error: any) {
+            console.error('Image analysis failed:', error);
+            toast.error('Analysis failed: ' + error.message);
+          } finally {
+            setIsAnalyzing(false);
           }
         };
         
-        setDiagnosis(realDiagnosis);
-        setIsAnalyzing(false);
-      }, 4000);
-    } else {
-      // Use demo content if no API keys configured
-      setTimeout(() => {
-        const mockDiagnosis = {
-          condition: 'Contact Dermatitis (Demo)',
-          confidence: 78,
-          description: 'Demo analysis - Configure API keys in Settings to get real AI-powered diagnosis.',
-          severity: 'mild',
-          anomalyDetected: true,
-          naturalRemedies: [
-            'Apply cool, wet compresses for 15-20 minutes several times daily',
-            'Use aloe vera gel (pure, without additives) 3-4 times daily',
-            'Take oatmeal baths - blend oats and add to lukewarm bath water'
-          ],
-          foods: [
-            'Anti-inflammatory foods: turmeric, ginger, leafy greens',
-            'Omega-3 rich foods: walnuts, flaxseeds, chia seeds'
-          ],
-          medications: [
-            'Antihistamine (Benadryl) 25mg every 6 hours for itching',
-            'Hydrocortisone cream 1% - apply thin layer twice daily'
-          ],
-          warning: 'This is demo content. Configure API keys in Settings for real AI analysis.'
-        };
-        
-        setDiagnosis(mockDiagnosis);
-        setIsAnalyzing(false);
-      }, 3000);
+        reader.readAsDataURL(file);
+      } else {
+        // Demo analysis
+        setTimeout(() => {
+          const mockDiagnosis = {
+            findings: [
+              {
+                type: 'Visual Analysis (Demo)',
+                description: 'Demo analysis - Configure OpenAI API key in environment variables for real AI-powered image analysis.',
+                severity: 'mild',
+                confidence: 0.78
+              }
+            ],
+            diagnosis: {
+              condition: 'Contact Dermatitis (Demo)',
+              confidence: 0.78,
+              description: 'Demo analysis - Configure OpenAI API key for real AI analysis.'
+            },
+            naturalRemedies: [
+              'Apply cool, wet compresses for 15-20 minutes several times daily',
+              'Use aloe vera gel (pure, without additives) 3-4 times daily',
+              'Take oatmeal baths - blend oats and add to lukewarm bath water'
+            ],
+            foods: [
+              'Anti-inflammatory foods: turmeric, ginger, leafy greens',
+              'Omega-3 rich foods: walnuts, flaxseeds, chia seeds'
+            ],
+            medications: [
+              'Antihistamine (Benadryl) 25mg every 6 hours for itching',
+              'Hydrocortisone cream 1% - apply thin layer twice daily'
+            ],
+            warning: 'This is demo content. Configure OpenAI API key for real AI analysis.'
+          };
+          
+          setDiagnosis(mockDiagnosis);
+          setIsAnalyzing(false);
+        }, 3000);
+      }
+    } catch (error: any) {
+      console.error('Analysis failed:', error);
+      toast.error('Analysis failed: ' + error.message);
+      setIsAnalyzing(false);
     }
   };
 
@@ -255,6 +244,13 @@ const PhotoDiagnosis: React.FC = () => {
       >
         <h1 className="text-3xl font-bold text-gray-800 mb-2">AI Photo Diagnosis</h1>
         <p className="text-gray-600">Upload medical images for AI-powered visual diagnosis and comprehensive treatment recommendations.</p>
+        {!aiService.isConfigured() && (
+          <div className="mt-2 p-3 bg-yellow-100 border-2 border-yellow-300 rounded-lg">
+            <p className="text-sm text-yellow-800">
+              <strong>Demo Mode:</strong> Configure OpenAI API key in environment variables for real AI-powered image analysis.
+            </p>
+          </div>
+        )}
       </motion.div>
 
       {/* Doctor Selection Section */}
@@ -262,7 +258,7 @@ const PhotoDiagnosis: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="backdrop-blur-md bg-glass-white rounded-2xl border-2 border-medical-primary/20 shadow-medical p-6"
+        className="bg-white rounded-2xl border-2 border-medical-primary/20 shadow-lg p-6"
       >
         <div className="flex items-center mb-4">
           <Users className="h-5 w-5 text-medical-primary mr-2" />
@@ -274,8 +270,8 @@ const PhotoDiagnosis: React.FC = () => {
             <DoctorSelector
               doctors={doctors}
               selectedDoctor={selectedDoctor}
-              onSelectDoctor={setSelectedDoctor}
-              showOnlyTypes={['General Practitioner', 'Radiologist']}
+              onDoctorSelect={setSelectedDoctor}
+              defaultSpecialty="Radiologist"
             />
           </div>
           
@@ -299,7 +295,7 @@ const PhotoDiagnosis: React.FC = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="backdrop-blur-md bg-glass-white rounded-2xl border-2 border-medical-primary/20 shadow-medical hover:shadow-green-glow transition-all duration-300 p-6"
+          className="bg-white rounded-2xl border-2 border-medical-primary/20 shadow-lg hover:shadow-xl transition-all duration-300 p-6"
         >
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
             <Camera className="h-5 w-5 mr-2 text-medical-primary" />
@@ -310,7 +306,7 @@ const PhotoDiagnosis: React.FC = () => {
             {...getRootProps()}
             className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 ${
               isDragActive 
-                ? 'border-medical-primary bg-medical-primary/10 shadow-green-glow' 
+                ? 'border-medical-primary bg-medical-primary/10 shadow-lg' 
                 : 'border-medical-primary/30 hover:border-medical-primary hover:bg-medical-primary/5'
             }`}
           >
@@ -338,7 +334,7 @@ const PhotoDiagnosis: React.FC = () => {
             <select
               value={imageType}
               onChange={(e) => setImageType(e.target.value)}
-              className="w-full p-3 bg-white/70 border-2 border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-primary/30 focus:border-medical-primary transition-colors text-gray-800"
+              className="w-full p-3 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-primary/30 focus:border-medical-primary transition-colors text-gray-800"
             >
               <option value="" className="text-gray-800">Select image type</option>
               {imageTypes.map((type) => (
@@ -355,7 +351,7 @@ const PhotoDiagnosis: React.FC = () => {
             <select
               value={selectedBodyPart}
               onChange={(e) => setSelectedBodyPart(e.target.value)}
-              className="w-full p-3 bg-white/70 border-2 border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-primary/30 focus:border-medical-primary transition-colors text-gray-800"
+              className="w-full p-3 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-primary/30 focus:border-medical-primary transition-colors text-gray-800"
             >
               <option value="" className="text-gray-800">Select body part</option>
               {bodyParts.map((part) => (
@@ -389,12 +385,12 @@ const PhotoDiagnosis: React.FC = () => {
               <button
                 onClick={handleAnalyze}
                 disabled={isAnalyzing || uploadedImages.length === 0}
-                className="w-full mt-4 bg-gradient-to-r from-medical-primary to-medical-secondary text-white py-3 px-4 rounded-xl font-medium hover:shadow-green-glow transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+                className="w-full mt-4 bg-gradient-to-r from-medical-primary to-medical-secondary text-white py-3 px-4 rounded-xl font-medium hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
               >
                 {isAnalyzing ? (
                   <>
                     <Loader className="animate-spin h-4 w-4 mr-2" />
-                    Analyzing Images...
+                    {aiService.isConfigured() ? 'AI Analyzing Images...' : 'Generating Demo Analysis...'}
                   </>
                 ) : (
                   <>
@@ -412,7 +408,7 @@ const PhotoDiagnosis: React.FC = () => {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="backdrop-blur-md bg-glass-white rounded-2xl border-2 border-medical-primary/20 shadow-medical hover:shadow-green-glow transition-all duration-300 p-6"
+          className="bg-white rounded-2xl border-2 border-medical-primary/20 shadow-lg hover:shadow-xl transition-all duration-300 p-6"
         >
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
             <Eye className="h-5 w-5 mr-2 text-medical-primary" />
@@ -429,7 +425,9 @@ const PhotoDiagnosis: React.FC = () => {
           {isAnalyzing && (
             <div className="text-center py-12">
               <div className="animate-spin mx-auto h-12 w-12 border-4 border-medical-primary border-t-transparent rounded-full mb-4"></div>
-              <p className="text-gray-800 font-medium">AI is analyzing your images...</p>
+              <p className="text-gray-800 font-medium">
+                {aiService.isConfigured() ? 'AI is analyzing your images...' : 'Generating demo analysis...'}
+              </p>
               <p className="text-sm text-gray-600 mt-2">Advanced computer vision in progress</p>
             </div>
           )}
@@ -437,13 +435,13 @@ const PhotoDiagnosis: React.FC = () => {
           {diagnosis && (
             <div className="space-y-6">
               {/* Anomaly Alert */}
-              {diagnosis.anomalyDetected && (
+              {diagnosis.findings && diagnosis.findings.length > 0 && (
                 <div className="bg-gradient-to-r from-red-100 to-orange-100 rounded-xl p-4 border-2 border-red-300">
                   <div className="flex items-center mb-2">
                     <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
-                    <h3 className="font-semibold text-gray-800">Anomaly Detected</h3>
+                    <h3 className="font-semibold text-gray-800">Visual Analysis Complete</h3>
                   </div>
-                  <p className="text-sm text-gray-700">AI has detected an anomaly that requires attention. Full treatment plan generated below.</p>
+                  <p className="text-sm text-gray-700">AI has completed visual analysis. Full treatment plan generated below.</p>
                 </div>
               )}
 
@@ -453,62 +451,64 @@ const PhotoDiagnosis: React.FC = () => {
                   <CheckCircle className="h-5 w-5 text-medical-primary mr-2" />
                   <h3 className="font-semibold text-gray-800">Visual Diagnosis</h3>
                 </div>
-                <h4 className="text-lg font-bold text-gray-800 mb-2">{diagnosis.condition}</h4>
-                <p className="text-sm text-gray-700 mb-2">{diagnosis.description}</p>
+                <h4 className="text-lg font-bold text-gray-800 mb-2">{diagnosis.diagnosis?.condition || 'Analysis Complete'}</h4>
+                <p className="text-sm text-gray-700 mb-2">{diagnosis.diagnosis?.description || 'Visual analysis completed successfully.'}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <span className="text-sm text-gray-700">Confidence: </span>
-                    <span className="font-semibold text-gray-800 ml-1">{diagnosis.confidence}%</span>
+                    <span className="font-semibold text-gray-800 ml-1">{((diagnosis.diagnosis?.confidence || 0.75) * 100).toFixed(1)}%</span>
                   </div>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    diagnosis.severity === 'mild' ? 'bg-green-100 text-green-700 border border-green-300' :
-                    diagnosis.severity === 'moderate' ? 'bg-yellow-100 text-yellow-700 border border-yellow-300' :
-                    'bg-red-100 text-red-700 border border-red-300'
-                  }`}>
-                    {diagnosis.severity} severity
+                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 border border-green-300">
+                    Analysis Complete
                   </span>
                 </div>
               </div>
 
-              {/* Treatment Plan Phases */}
-              {diagnosis.treatmentPlan && (
+              {/* Findings */}
+              {diagnosis.findings && diagnosis.findings.length > 0 && (
                 <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl p-4 border-2 border-blue-300">
                   <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
                     <Activity className="h-5 w-5 mr-2 text-blue-600" />
-                    Lifecycle Treatment Plan
+                    Visual Findings
                   </h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm">
-                      <span className="w-3 h-3 bg-blue-600 rounded-full mr-3"></span>
-                      <span className="text-gray-700">{diagnosis.treatmentPlan.phase1}</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <span className="w-3 h-3 bg-purple-600 rounded-full mr-3"></span>
-                      <span className="text-gray-700">{diagnosis.treatmentPlan.phase2}</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <span className="w-3 h-3 bg-green-600 rounded-full mr-3"></span>
-                      <span className="text-gray-700">{diagnosis.treatmentPlan.phase3}</span>
-                    </div>
+                  <div className="space-y-3">
+                    {diagnosis.findings.map((finding: any, index: number) => (
+                      <div key={index} className="bg-white/50 rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-medium text-gray-800">{finding.type}</h4>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            finding.severity === 'mild' ? 'bg-green-100 text-green-700' :
+                            finding.severity === 'moderate' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-red-100 text-red-700'
+                          }`}>
+                            {finding.severity}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700 mb-1">{finding.description}</p>
+                        <p className="text-xs text-gray-600">Confidence: {(finding.confidence * 100).toFixed(1)}%</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
 
               {/* Natural Remedies */}
-              <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-4 border-2 border-green-300">
-                <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                  <Leaf className="h-5 w-5 mr-2 text-green-600" />
-                  Natural Remedies
-                </h3>
-                <ul className="space-y-2">
-                  {diagnosis.naturalRemedies.map((remedy: string, index: number) => (
-                    <li key={index} className="text-sm text-gray-700 flex items-start">
-                      <span className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                      {remedy}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {diagnosis.naturalRemedies && (
+                <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-4 border-2 border-green-300">
+                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
+                    <Leaf className="h-5 w-5 mr-2 text-green-600" />
+                    Natural Remedies
+                  </h3>
+                  <ul className="space-y-2">
+                    {diagnosis.naturalRemedies.map((remedy: string, index: number) => (
+                      <li key={index} className="text-sm text-gray-700 flex items-start">
+                        <span className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                        {remedy}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* Healing Foods */}
               {diagnosis.foods && (
@@ -528,23 +528,32 @@ const PhotoDiagnosis: React.FC = () => {
                 </div>
               )}
 
-              {/* Recommended Exercises */}
-              {diagnosis.exercises && (
-                <div className="bg-gradient-to-r from-cyan-100 to-blue-100 rounded-xl p-4 border-2 border-cyan-300">
+              {/* Medications */}
+              {diagnosis.medications && (
+                <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-4 border-2 border-purple-300">
                   <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                    <Activity className="h-5 w-5 mr-2 text-cyan-600" />
-                    Recommended Exercises
+                    <Pill className="h-5 w-5 mr-2 text-purple-600" />
+                    Recommended Medications
                   </h3>
                   <ul className="space-y-2">
-                    {diagnosis.exercises.map((exercise: string, index: number) => (
+                    {diagnosis.medications.map((med: string, index: number) => (
                       <li key={index} className="text-sm text-gray-700 flex items-start">
-                        <span className="w-2 h-2 bg-cyan-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                        {exercise}
+                        <span className="w-2 h-2 bg-purple-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                        {med}
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
+
+              {/* Warning */}
+              <div className="bg-gradient-to-r from-red-100 to-pink-100 rounded-xl p-4 border-2 border-red-300">
+                <h3 className="font-semibold text-gray-800 mb-2 flex items-center">
+                  <AlertCircle className="h-5 w-5 mr-2 text-red-600" />
+                  Important Warning
+                </h3>
+                <p className="text-sm text-gray-700">{diagnosis.warning || 'This is AI analysis for informational purposes. Always consult with a qualified healthcare professional for proper diagnosis and treatment.'}</p>
+              </div>
 
               {/* E-commerce Integration */}
               <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-4 border-2 border-purple-300">
@@ -570,10 +579,10 @@ const PhotoDiagnosis: React.FC = () => {
 
               {/* Start Treatment Button */}
               <div className="flex space-x-3">
-                <button className="flex-1 bg-gradient-to-r from-medical-primary to-medical-secondary text-white py-3 px-4 rounded-xl font-medium hover:shadow-green-glow transform hover:scale-[1.02] transition-all duration-200">
+                <button className="flex-1 bg-gradient-to-r from-medical-primary to-medical-secondary text-white py-3 px-4 rounded-xl font-medium hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200">
                   Start Treatment Plan
                 </button>
-                <button className="flex-1 bg-white/70 hover:bg-white/90 border-2 border-medical-primary/30 text-gray-800 py-3 px-4 rounded-xl font-medium transition-colors">
+                <button className="flex-1 bg-white hover:bg-gray-50 border-2 border-medical-primary/30 text-gray-800 py-3 px-4 rounded-xl font-medium transition-colors">
                   View Full Details
                 </button>
               </div>

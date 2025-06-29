@@ -1,54 +1,22 @@
 class AIService {
-  private getApiKey(provider: 'gemini' | 'openai'): string | null {
-    // Check localStorage first (for settings override)
-    const storedKey = localStorage.getItem(`${provider}_api_key`);
-    if (storedKey && storedKey.trim()) {
-      return storedKey.trim();
+  private getApiKey(): string | null {
+    // Check environment variable first
+    const envKey = import.meta.env.VITE_OPENAI_API_KEY;
+    if (envKey && envKey.trim()) {
+      return envKey.trim();
     }
     
-    // Fallback to environment variables
-    if (provider === 'gemini') {
-      return import.meta.env.VITE_GEMINI_API_KEY || null;
-    } else if (provider === 'openai') {
-      return import.meta.env.VITE_OPENAI_API_KEY || null;
+    // Fallback to localStorage (for settings override)
+    const storedKey = localStorage.getItem('openai_api_key');
+    if (storedKey && storedKey.trim()) {
+      return storedKey.trim();
     }
     
     return null;
   }
 
-  private async callGeminiAPI(prompt: string): Promise<string> {
-    const apiKey = this.getApiKey('gemini');
-    if (!apiKey) {
-      throw new Error('Gemini API key not configured');
-    }
-
-    try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: prompt }]
-          }]
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Gemini API error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.candidates[0].content.parts[0].text;
-    } catch (error) {
-      console.error('Gemini API call failed:', error);
-      throw error;
-    }
-  }
-
-  private async callOpenAIAPI(prompt: string): Promise<string> {
-    const apiKey = this.getApiKey('openai');
+  private async callOpenAIAPI(prompt: string, systemPrompt?: string): Promise<string> {
+    const apiKey = this.getApiKey();
     if (!apiKey) {
       throw new Error('OpenAI API key not configured');
     }
@@ -61,24 +29,25 @@ class AIService {
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
+          model: 'gpt-4o-mini',
           messages: [
             {
               role: 'system',
-              content: 'You are a medical AI assistant. Provide helpful, accurate medical information while emphasizing the importance of consulting healthcare professionals.'
+              content: systemPrompt || 'You are a medical AI assistant. Provide helpful, accurate medical information while emphasizing the importance of consulting healthcare professionals.'
             },
             {
               role: 'user',
               content: prompt
             }
           ],
-          max_tokens: 1500,
+          max_tokens: 2000,
           temperature: 0.7
         })
       });
 
       if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`OpenAI API error: ${response.statusText} - ${errorData.error?.message || 'Unknown error'}`);
       }
 
       const data = await response.json();
@@ -89,18 +58,113 @@ class AIService {
     }
   }
 
-  async generateSymptomDiagnosis(symptoms: string, bodyParts: string[], severity: string, duration: string): Promise<any> {
-    const provider = localStorage.getItem('ai_provider') || 'gemini';
+  async analyzeImage(imageBase64: string, doctorSpecialty: string, bodyParts: string[], imageType: string): Promise<any> {
+    const apiKey = this.getApiKey();
+    if (!apiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
+
+    const systemPrompt = `You are a ${doctorSpecialty} AI assistant specializing in medical image analysis. Analyze the provided medical image and provide a comprehensive diagnosis.`;
+
+    const prompt = `
+Analyze this ${imageType} image focusing on ${bodyParts.join(', ')} and provide:
+
+1. Detailed visual findings
+2. Most likely diagnosis with confidence percentage
+3. Severity assessment (mild/moderate/severe)
+4. Recommended next steps
+5. Natural remedies and treatments
+6. Recommended foods and supplements
+7. Medications if needed
+8. Warning signs to watch for
+
+Format as JSON:
+{
+  "findings": [
+    {
+      "type": "finding type",
+      "description": "detailed description",
+      "severity": "mild/moderate/severe",
+      "confidence": 0.85
+    }
+  ],
+  "diagnosis": {
+    "condition": "primary diagnosis",
+    "confidence": 0.90,
+    "description": "detailed explanation"
+  },
+  "naturalRemedies": ["remedy1", "remedy2"],
+  "foods": ["food1", "food2"],
+  "medications": ["med1", "med2"],
+  "warning": "important warnings"
+}
+`;
+
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: systemPrompt
+            },
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'text',
+                  text: prompt
+                },
+                {
+                  type: 'image_url',
+                  image_url: {
+                    url: `data:image/jpeg;base64,${imageBase64}`
+                  }
+                }
+              ]
+            }
+          ],
+          max_tokens: 2000,
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenAI API error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const content = data.choices[0].message.content;
+      
+      try {
+        return JSON.parse(content);
+      } catch {
+        return this.parseImageAnalysisResponse(content, doctorSpecialty);
+      }
+    } catch (error) {
+      console.error('Image analysis failed:', error);
+      throw error;
+    }
+  }
+
+  async generateSymptomDiagnosis(symptoms: string, bodyParts: string[], severity: string, duration: string, doctorSpecialty: string = 'General Physician'): Promise<any> {
+    const systemPrompt = `You are a ${doctorSpecialty} AI assistant. Provide comprehensive medical analysis tailored to your specialty.`;
     
     const prompt = `
-As a medical AI assistant, analyze the following symptoms and provide a comprehensive diagnosis and treatment plan:
+As a ${doctorSpecialty}, analyze these symptoms and provide a comprehensive diagnosis:
 
 Symptoms: ${symptoms}
 Affected body parts: ${bodyParts.join(', ')}
 Severity: ${severity}
 Duration: ${duration}
 
-Please provide a structured response with:
+Provide a structured response with:
 1. Most likely condition name
 2. Confidence percentage (0-100)
 3. Brief description of the condition
@@ -110,7 +174,7 @@ Please provide a structured response with:
 7. 4 administration instructions
 8. Important warning signs to watch for
 
-Format the response as a JSON object with the following structure:
+Format as JSON:
 {
   "condition": "condition name",
   "confidence": number,
@@ -124,18 +188,11 @@ Format the response as a JSON object with the following structure:
 `;
 
     try {
-      let response: string;
-      if (provider === 'openai') {
-        response = await this.callOpenAIAPI(prompt);
-      } else {
-        response = await this.callGeminiAPI(prompt);
-      }
-
-      // Try to parse JSON response
+      const response = await this.callOpenAIAPI(prompt, systemPrompt);
+      
       try {
         return JSON.parse(response);
       } catch {
-        // If JSON parsing fails, create structured response from text
         return this.parseTextResponse(response);
       }
     } catch (error) {
@@ -144,11 +201,11 @@ Format the response as a JSON object with the following structure:
     }
   }
 
-  async generateTreatmentPlan(condition: string, severity: string): Promise<any> {
-    const provider = localStorage.getItem('ai_provider') || 'gemini';
+  async generateTreatmentPlan(condition: string, severity: string, doctorSpecialty: string = 'General Physician'): Promise<any> {
+    const systemPrompt = `You are a ${doctorSpecialty} AI assistant. Create comprehensive treatment plans tailored to your specialty.`;
     
     const prompt = `
-Create a comprehensive treatment plan for: ${condition} (${severity} severity)
+As a ${doctorSpecialty}, create a comprehensive treatment plan for: ${condition} (${severity} severity)
 
 Provide a detailed treatment plan with:
 1. Lifecycle phases (3 phases with descriptions)
@@ -181,13 +238,8 @@ Format as JSON:
 `;
 
     try {
-      let response: string;
-      if (provider === 'openai') {
-        response = await this.callOpenAIAPI(prompt);
-      } else {
-        response = await this.callGeminiAPI(prompt);
-      }
-
+      const response = await this.callOpenAIAPI(prompt, systemPrompt);
+      
       try {
         return JSON.parse(response);
       } catch {
@@ -199,11 +251,11 @@ Format as JSON:
     }
   }
 
-  async generateHealthArticle(topic: string): Promise<any> {
-    const provider = localStorage.getItem('ai_provider') || 'gemini';
+  async generateHealthArticle(topic: string, doctorSpecialty: string = 'General Physician'): Promise<any> {
+    const systemPrompt = `You are a ${doctorSpecialty} AI assistant. Write comprehensive health education content from your specialty perspective.`;
     
     const prompt = `
-Write a comprehensive health education article about: ${topic}
+As a ${doctorSpecialty}, write a comprehensive health education article about: ${topic}
 
 Include:
 1. Detailed overview (2-3 paragraphs)
@@ -226,13 +278,8 @@ Format as JSON:
 `;
 
     try {
-      let response: string;
-      if (provider === 'openai') {
-        response = await this.callOpenAIAPI(prompt);
-      } else {
-        response = await this.callGeminiAPI(prompt);
-      }
-
+      const response = await this.callOpenAIAPI(prompt, systemPrompt);
+      
       try {
         return JSON.parse(response);
       } catch {
@@ -244,8 +291,45 @@ Format as JSON:
     }
   }
 
+  private parseImageAnalysisResponse(text: string, doctorSpecialty: string): any {
+    return {
+      findings: [
+        {
+          type: "AI Visual Analysis",
+          description: `${doctorSpecialty} analysis: ${text.substring(0, 200)}...`,
+          severity: "moderate",
+          confidence: 0.75
+        }
+      ],
+      diagnosis: {
+        condition: "AI-Generated Analysis",
+        confidence: 0.75,
+        description: text.substring(0, 300) + "..."
+      },
+      naturalRemedies: [
+        "Rest and adequate sleep",
+        "Stay hydrated with water",
+        "Apply warm or cold compress as appropriate",
+        "Practice stress reduction techniques",
+        "Maintain healthy diet"
+      ],
+      foods: [
+        "Fresh fruits and vegetables",
+        "Lean proteins",
+        "Whole grains",
+        "Anti-inflammatory foods",
+        "Plenty of fluids"
+      ],
+      medications: [
+        "Over-the-counter pain relievers as needed",
+        "Consult pharmacist for recommendations",
+        "Follow package instructions"
+      ],
+      warning: "Consult a healthcare professional for proper diagnosis and treatment."
+    };
+  }
+
   private parseTextResponse(text: string): any {
-    // Fallback parser for non-JSON responses
     return {
       condition: "AI-Generated Diagnosis",
       confidence: 75,
@@ -367,7 +451,7 @@ Format as JSON:
   }
 
   isConfigured(): boolean {
-    return !!(this.getApiKey('gemini') || this.getApiKey('openai'));
+    return !!this.getApiKey();
   }
 }
 

@@ -7,59 +7,34 @@ class PaystackService {
 
   async initializePayment(data: {
     email: string;
-    amount: number; // in kobo
+    amount: number; // in major currency unit (NGN or USD)
     currency?: string;
     reference?: string;
     callback_url?: string;
     metadata?: any;
   }): Promise<any> {
-    try {
-      const response = await fetch('/api/payments/initialize', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: data.email,
-          amount: data.amount,
-          currency: data.currency || 'NGN',
-          metadata: data.metadata
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Paystack API error: ${response.statusText}`);
+    // For demo purposes, return a mock response
+    return {
+      status: true,
+      data: {
+        reference: this.generateReference(),
+        authorization_url: '#',
+        access_code: 'demo_access_code'
       }
-
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error('Paystack payment initialization failed:', error);
-      throw error;
-    }
+    };
   }
 
   async verifyPayment(reference: string): Promise<any> {
-    try {
-      const response = await fetch(`/api/payments/verify/${reference}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Paystack verification error: ${response.statusText}`);
+    // For demo purposes, return a mock verification
+    return {
+      status: true,
+      data: {
+        reference: reference,
+        status: 'success',
+        amount: 10000,
+        currency: 'NGN'
       }
-
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error('Paystack payment verification failed:', error);
-      throw error;
-    }
+    };
   }
 
   openPaymentModal(data: {
@@ -83,6 +58,28 @@ class PaystackService {
   }
 
   private openModal(data: any) {
+    if (!this.publicKey) {
+      // Demo mode - show alert instead of actual payment
+      const proceed = confirm(`Demo Payment Modal\n\nAmount: ${data.currency || 'NGN'} ${(data.amount / 100).toLocaleString()}\nEmail: ${data.email}\n\nClick OK to simulate successful payment, Cancel to simulate failed payment.`);
+      
+      if (proceed) {
+        // Simulate successful payment
+        setTimeout(() => {
+          data.callback({
+            status: 'success',
+            reference: data.ref,
+            trans: data.ref,
+            transaction: data.ref
+          });
+        }, 1000);
+      } else {
+        // Simulate cancelled payment
+        data.onClose();
+      }
+      return;
+    }
+
+    // Real Paystack integration
     const handler = window.PaystackPop.setup({
       key: this.publicKey,
       email: data.email,

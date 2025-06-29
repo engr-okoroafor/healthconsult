@@ -12,7 +12,13 @@ import {
   PhoneOff,
   Phone,
   Lock,
-  Users
+  Users,
+  Brain,
+  Eye,
+  Ear,
+  Heart,
+  Activity,
+  Bone
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -33,10 +39,39 @@ const StartConsultation: React.FC = () => {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [symptoms, setSymptoms] = useState('');
+  const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
+  const [severity, setSeverity] = useState('');
+  const [duration, setDuration] = useState('');
   const [diagnosis, setDiagnosis] = useState<any>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+
+  const bodyParts = [
+    { id: 'head', name: 'Head/Brain', icon: Brain },
+    { id: 'eyes', name: 'Eyes', icon: Eye },
+    { id: 'nose', name: 'Nose', icon: User },
+    { id: 'ears', name: 'Ears', icon: Ear },
+    { id: 'chest', name: 'Chest/Lungs', icon: Activity },
+    { id: 'heart', name: 'Heart', icon: Heart },
+    { id: 'stomach', name: 'Stomach/Abdomen', icon: User },
+    { id: 'bones', name: 'Bones/Joints', icon: Bone },
+    { id: 'skin', name: 'Skin', icon: User },
+  ];
+
+  const severityLevels = [
+    { id: 'mild', name: 'Mild', color: 'text-green-600', bg: 'bg-green-100', border: 'border-green-300' },
+    { id: 'moderate', name: 'Moderate', color: 'text-yellow-600', bg: 'bg-yellow-100', border: 'border-yellow-300' },
+    { id: 'severe', name: 'Severe', color: 'text-red-600', bg: 'bg-red-100', border: 'border-red-300' },
+  ];
+
+  const durationOptions = [
+    { id: 'few-hours', name: 'A few hours' },
+    { id: '1-day', name: '1 day' },
+    { id: '2-3-days', name: '2-3 days' },
+    { id: '1-week', name: 'About a week' },
+    { id: 'more-week', name: 'More than a week' },
+  ];
 
   useEffect(() => {
     if (user?.id) {
@@ -63,7 +98,7 @@ const StartConsultation: React.FC = () => {
       setDoctors(data || []);
       
       // Set General Physician as default
-      const defaultDoctor = (data || []).find((doc: any) => doc.specialty === 'General Practitioner');
+      const defaultDoctor = (data || []).find((doc: any) => doc.specialty === 'General Physician');
       if (defaultDoctor) {
         setSelectedDoctor(defaultDoctor);
       }
@@ -71,6 +106,14 @@ const StartConsultation: React.FC = () => {
       console.error('Error loading doctors:', err);
       toast.error('Failed to load doctors');
     }
+  };
+
+  const toggleBodyPart = (partId: string) => {
+    setSelectedBodyParts(prev => 
+      prev.includes(partId) 
+        ? prev.filter(id => id !== partId)
+        : [...prev, partId]
+    );
   };
 
   const handleAnalyzeSymptoms = async () => {
@@ -85,9 +128,10 @@ const StartConsultation: React.FC = () => {
       if (aiService.isConfigured()) {
         const result = await aiService.generateSymptomDiagnosis(
           symptoms,
-          [],
-          'moderate',
-          '1-3 days'
+          selectedBodyParts,
+          severity || 'moderate',
+          duration || '1-3 days',
+          selectedDoctor?.specialty || 'General Physician'
         );
         setDiagnosis(result);
         toast.success('Symptoms analyzed successfully!');
@@ -97,7 +141,7 @@ const StartConsultation: React.FC = () => {
           setDiagnosis({
             condition: 'Common Cold (Demo)',
             confidence: 85,
-            description: 'Demo analysis - Configure API keys in Settings for real AI analysis.',
+            description: 'Demo analysis - Configure OpenAI API key in environment variables for real AI analysis.',
             naturalRemedies: [
               'Rest and adequate sleep',
               'Drink warm fluids',
@@ -269,6 +313,13 @@ const StartConsultation: React.FC = () => {
       >
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Start Consultation</h1>
         <p className="text-gray-600">Connect with AI medical specialists for personalized health consultations and treatment recommendations.</p>
+        {!aiService.isConfigured() && (
+          <div className="mt-2 p-3 bg-yellow-100 border-2 border-yellow-300 rounded-lg">
+            <p className="text-sm text-yellow-800">
+              <strong>Demo Mode:</strong> Configure OpenAI API key in environment variables for real AI analysis.
+            </p>
+          </div>
+        )}
       </motion.div>
 
       {/* Premium Plan Banner */}
@@ -277,7 +328,7 @@ const StartConsultation: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="backdrop-blur-md bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl border-2 border-yellow-300 shadow-medical p-6"
+          className="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl border-2 border-yellow-300 shadow-lg p-6"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -302,7 +353,7 @@ const StartConsultation: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="backdrop-blur-md bg-glass-white rounded-2xl border-2 border-medical-primary/20 shadow-medical p-6"
+        className="bg-white rounded-2xl border-2 border-medical-primary/20 shadow-lg p-6"
       >
         <div className="flex items-center mb-4">
           <Users className="h-5 w-5 text-medical-primary mr-2" />
@@ -314,7 +365,7 @@ const StartConsultation: React.FC = () => {
             <DoctorSelector
               doctors={doctors}
               selectedDoctor={selectedDoctor}
-              onSelectDoctor={setSelectedDoctor}
+              onDoctorSelect={setSelectedDoctor}
             />
           </div>
           
@@ -322,10 +373,9 @@ const StartConsultation: React.FC = () => {
             {selectedDoctor && (
               <TavusAvatar
                 doctor={selectedDoctor}
-                isActive={isConnected}
-                onStart={() => startConsultation(selectedDoctor)}
-                onEnd={endConsultation}
                 symptoms={symptoms}
+                onConversationStart={handleConversationStart}
+                onConversationEnd={handleConversationEnd}
                 className="h-full"
               />
             )}
@@ -338,27 +388,91 @@ const StartConsultation: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="backdrop-blur-md bg-glass-white rounded-2xl border-2 border-medical-primary/20 shadow-medical p-6"
+        className="bg-white rounded-2xl border-2 border-medical-primary/20 shadow-lg p-6"
       >
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Describe Your Symptoms</h2>
         
-        <div className="space-y-4">
-          <textarea
-            value={symptoms}
-            onChange={(e) => setSymptoms(e.target.value)}
-            placeholder="Please describe your symptoms in detail... (e.g., I have a headache, feel tired, and have a runny nose)"
-            className="w-full p-4 bg-white/70 border-2 border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-primary/30 focus:border-medical-primary transition-colors backdrop-blur-sm h-32 resize-none text-gray-800 placeholder:text-gray-500"
-          />
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              What symptoms are you experiencing?
+            </label>
+            <textarea
+              value={symptoms}
+              onChange={(e) => setSymptoms(e.target.value)}
+              placeholder="Please describe your symptoms in detail... (e.g., I have a headache, feel tired, and have a runny nose)"
+              className="w-full p-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-primary/30 focus:border-medical-primary transition-colors h-32 resize-none text-gray-800 placeholder:text-gray-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Which body parts are affected? (Select multiple)
+            </label>
+            <div className="grid grid-cols-3 gap-3">
+              {bodyParts.map((part) => (
+                <button
+                  key={part.id}
+                  onClick={() => toggleBodyPart(part.id)}
+                  className={`p-3 rounded-lg border-2 transition-all duration-200 flex items-center text-sm ${
+                    selectedBodyParts.includes(part.id)
+                      ? 'bg-medical-primary/20 border-medical-primary text-gray-800 shadow-lg'
+                      : 'bg-white border-gray-300 text-gray-700 hover:bg-medical-primary/10 hover:border-medical-primary/50'
+                  }`}
+                >
+                  <part.icon className="h-4 w-4 mr-2 text-medical-primary" />
+                  {part.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              How severe are your symptoms?
+            </label>
+            <div className="flex space-x-3">
+              {severityLevels.map((level) => (
+                <button
+                  key={level.id}
+                  onClick={() => setSeverity(level.id)}
+                  className={`flex-1 p-3 rounded-lg border-2 transition-all duration-200 text-sm font-medium ${
+                    severity === level.id
+                      ? `${level.bg} ${level.border} ${level.color} shadow-lg`
+                      : 'bg-white border-gray-300 text-gray-700 hover:bg-medical-primary/10 hover:border-medical-primary/50'
+                  }`}
+                >
+                  {level.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              How long have you had these symptoms?
+            </label>
+            <select
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              className="w-full p-3 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-primary/30 focus:border-medical-primary transition-colors text-gray-800"
+            >
+              <option value="" className="text-gray-800">Select duration</option>
+              {durationOptions.map((option) => (
+                <option key={option.id} value={option.id} className="text-gray-800">{option.name}</option>
+              ))}
+            </select>
+          </div>
           
           <button
             onClick={handleAnalyzeSymptoms}
             disabled={!symptoms.trim() || isAnalyzing}
-            className="w-full bg-gradient-to-r from-medical-primary to-medical-secondary text-white py-3 px-4 rounded-xl font-medium hover:shadow-green-glow transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+            className="w-full bg-gradient-to-r from-medical-primary to-medical-secondary text-white py-3 px-4 rounded-xl font-medium hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
           >
             {isAnalyzing ? (
               <>
                 <Loader className="animate-spin h-4 w-4 mr-2" />
-                Analyzing Symptoms...
+                {aiService.isConfigured() ? 'AI Analyzing Symptoms...' : 'Generating Demo Analysis...'}
               </>
             ) : (
               <>
@@ -375,9 +489,11 @@ const StartConsultation: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="backdrop-blur-md bg-glass-white rounded-2xl border-2 border-medical-primary/20 shadow-medical p-6"
+          className="bg-white rounded-2xl border-2 border-medical-primary/20 shadow-lg p-6"
         >
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">AI Analysis Results</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            {aiService.isConfigured() ? 'AI Analysis Results' : 'Demo Analysis Results'}
+          </h2>
           
           <div className="space-y-4">
             {/* Diagnosis */}
@@ -449,6 +565,17 @@ const StartConsultation: React.FC = () => {
             <div className="bg-gradient-to-r from-red-100 to-pink-100 rounded-xl p-4 border-2 border-red-300">
               <h3 className="font-semibold text-gray-800 mb-2">⚠️ Important Warning</h3>
               <p className="text-sm text-gray-700">{diagnosis.warning}</p>
+            </div>
+
+            {/* Buy Food/Medicine Button */}
+            <div className="mt-6">
+              <button
+                onClick={() => setShowPurchaseModal(true)}
+                className="w-full bg-gradient-to-r from-medical-primary to-medical-secondary text-white py-3 px-4 rounded-xl font-medium hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center"
+              >
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Buy Recommended Food & Medicine
+              </button>
             </div>
           </div>
         </motion.div>
