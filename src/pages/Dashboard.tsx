@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
@@ -16,10 +16,14 @@ import {
   BookOpen,
   Thermometer,
   Shield,
-  Stethoscope
+  Stethoscope,
+  ShoppingCart
 } from 'lucide-react';
+import PurchaseModal from '../components/PurchaseModal';
 
 const Dashboard: React.FC = () => {
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+
   const stats = [
     {
       name: 'Health Checks',
@@ -62,7 +66,8 @@ const Dashboard: React.FC = () => {
       diagnosis: 'Viral infection',
       status: 'treated',
       treatment: 'Rest, fluids, natural remedies',
-      timestamp: '2 hours ago'
+      timestamp: '2 hours ago',
+      recommendedItems: ['Paracetamol', 'Honey', 'Ginger tea', 'Vitamin C']
     },
     {
       id: '2',
@@ -70,7 +75,8 @@ const Dashboard: React.FC = () => {
       diagnosis: 'Contact dermatitis',
       status: 'monitoring',
       treatment: 'Aloe vera, avoid irritants',
-      timestamp: '4 hours ago'
+      timestamp: '4 hours ago',
+      recommendedItems: ['Aloe vera gel', 'Anti-inflammatory cream', 'Zinc supplements']
     },
     {
       id: '3',
@@ -78,7 +84,8 @@ const Dashboard: React.FC = () => {
       diagnosis: 'Indigestion',
       status: 'resolved',
       treatment: 'Ginger tea, light diet',
-      timestamp: '6 hours ago'
+      timestamp: '6 hours ago',
+      recommendedItems: ['Ginger', 'Probiotics', 'Chamomile tea']
     },
   ];
 
@@ -112,6 +119,10 @@ const Dashboard: React.FC = () => {
       href: '/education'
     }
   ];
+
+  const handleBuyItems = (recommendedItems: string[]) => {
+    setShowPurchaseModal(true);
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -230,7 +241,7 @@ const Dashboard: React.FC = () => {
                         <p className="text-sm text-gray-600">
                           <strong>Treatment:</strong> {consultation.treatment}
                         </p>
-                        <div className="mt-2">
+                        <div className="mt-3 flex items-center justify-between">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                             consultation.status === 'resolved' ? 'bg-green-100 text-green-800' :
                             consultation.status === 'treated' ? 'bg-blue-100 text-blue-800' :
@@ -238,6 +249,13 @@ const Dashboard: React.FC = () => {
                           }`}>
                             {consultation.status.charAt(0).toUpperCase() + consultation.status.slice(1)}
                           </span>
+                          <button
+                            onClick={() => handleBuyItems(consultation.recommendedItems)}
+                            className="flex items-center px-3 py-1 bg-gradient-to-r from-medical-primary to-medical-secondary text-white text-xs rounded-full hover:shadow-lg transition-all duration-200"
+                          >
+                            <ShoppingCart className="h-3 w-3 mr-1" />
+                            Buy Items
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -303,10 +321,36 @@ const Dashboard: React.FC = () => {
                   <li>• Avoid smoking and excessive alcohol</li>
                 </ul>
               </div>
+
+              {/* Quick Purchase Section */}
+              <div className="bg-white rounded-xl border border-purple-200 shadow-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                  <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-600 mr-2">
+                    <ShoppingCart className="h-5 w-5 text-white" />
+                  </div>
+                  Quick Purchase
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Get medicines and healthy foods delivered to your doorstep
+                </p>
+                <button
+                  onClick={() => setShowPurchaseModal(true)}
+                  className="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white py-2 px-4 rounded-lg font-medium hover:shadow-lg transition-all duration-200"
+                >
+                  Browse Items
+                </button>
+              </div>
             </motion.div>
           </div>
         </div>
       </div>
+
+      {/* Purchase Modal */}
+      <PurchaseModal 
+        isOpen={showPurchaseModal}
+        onClose={() => setShowPurchaseModal(false)}
+        recommendedItems={[]}
+      />
     </div>
   );
 };
