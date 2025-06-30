@@ -429,49 +429,46 @@ Format as JSON:
   }
 
   private parseTextResponse(text: string): any {
-    // Clean up the response by removing markdown code blocks
-    const cleanText = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-    
     return {
-      condition: "Comprehensive Health Assessment",
-      confidence: 82,
-      description: "Based on your symptoms and medical history, this appears to be a common condition that can be effectively managed with proper treatment and lifestyle modifications. The following comprehensive plan addresses both immediate relief and long-term recovery.",
+      condition: "AI-Generated Diagnosis",
+      confidence: 75,
+      description: text.substring(0, 200) + "...",
       naturalRemedies: [
-        "Complete rest and recovery protocol: Sleep 8-9 hours nightly in completely dark room with blackout curtains, maintain 65-68°F temperature, use white noise machine, elevate head 30 degrees with memory foam pillow for optimal healing",
-        "Advanced hydration therapy: Drink 12-14 glasses (96-112oz) filtered water daily, add 1/4 teaspoon Himalayan pink salt per 32oz for electrolyte balance, sip 4oz every 30 minutes while awake",
-        "Therapeutic heat and cold therapy: Apply heating pad set to medium (104°F) with timer for exactly 20 minutes, 4 times daily. Alternate with ice pack wrapped in towel for 15 minutes, use moisture barrier cloth",
-        "Structured breathing and meditation: Practice 4-7-8 breathing technique (inhale 4 counts, hold 7, exhale 8) for 5 minutes, 3 times daily using meditation app timer for stress reduction",
-        "Healing ginger honey elixir: Grate 1 tablespoon fresh organic ginger root, steep in 8oz boiling water for 15 minutes, strain, add 1 teaspoon raw Manuka honey (UMF 15+), drink 3 times daily",
-        "Therapeutic Epsom salt baths: Dissolve 2 cups pharmaceutical-grade Epsom salt in warm bath (98-100°F), add 5 drops lavender oil, soak for 20 minutes before bedtime for muscle relaxation",
-        "Professional aromatherapy protocol: Diffuse 5 drops lavender + 3 drops eucalyptus oil in bedroom for 30 minutes before sleep using ultrasonic diffuser for respiratory and nervous system support",
-        "Immune-boosting herbal supplementation: Take 300mg standardized echinacea extract + 1000mg vitamin C + 15mg zinc daily with meals for enhanced immune system function and faster recovery"
+        "Complete bed rest: Sleep 8-9 hours nightly in completely dark room (blackout curtains), maintain 65-68°F temperature, use white noise machine, elevate head 30 degrees with memory foam pillow",
+        "Hydration protocol: Drink 12-14 glasses (96-112oz) filtered water daily, add 1/4 teaspoon Himalayan salt per 32oz, sip 4oz every 30 minutes while awake",
+        "Therapeutic heat therapy: Apply heating pad set to medium (104°F) with timer for exactly 20 minutes, 4 times daily, use moisture barrier cloth to prevent burns",
+        "Structured breathing exercises: Practice 4-7-8 technique (inhale 4 counts, hold 7, exhale 8) for 5 minutes, 3 times daily using meditation app timer",
+        "Fresh ginger honey tea: Grate 1 tablespoon fresh organic ginger root, steep in 8oz boiling water for 15 minutes, strain, add 1 teaspoon raw Manuka honey (UMF 15+)",
+        "Cold therapy alternation: Apply ice pack wrapped in thin towel for 15 minutes, then remove for 15 minutes, repeat 3 cycles, twice daily",
+        "Epsom salt bath: Dissolve 2 cups pharmaceutical-grade Epsom salt in warm bath (98-100°F), soak for 20 minutes before bedtime",
+        "Essential oil aromatherapy: Diffuse 5 drops lavender + 3 drops eucalyptus oil in bedroom for 30 minutes before sleep using ultrasonic diffuser"
       ],
       foods: [
-        "Comprehensive citrus vitamin protocol: Eat 2 large navel oranges with white pith daily for bioflavonoids, squeeze 1/2 fresh lemon in 16oz warm water each morning on empty stomach, add 1/2 grapefruit for vitamin C boost",
-        "Professional-grade bone broth therapy: Simmer 3lbs grass-fed beef bones + organic vegetables (onion, carrots, celery) + 1 inch fresh ginger for 24 hours, strain, drink 8oz warm every 3 hours for collagen and minerals",
-        "Nutrient-dense superfood salad: Combine 2 cups organic spinach + 1 cup massaged kale + 1/4 cup walnuts + 1 tablespoon olive oil + lemon juice, consume within 30 minutes of preparation for maximum nutrients",
-        "Anti-inflammatory golden paste: Mix 1 teaspoon organic turmeric + 1/4 teaspoon black pepper + 1 tablespoon coconut oil, take with warm organic milk before bed for enhanced curcumin absorption",
-        "Probiotic immune powerhouse: 6oz plain Greek yogurt (Fage Total 0%) with 50+ billion CFU live cultures, add 1 tablespoon raw Manuka honey and 1/4 cup organic blueberries for gut health",
-        "Omega-3 healing protocol: 4oz wild-caught Atlantic salmon with skin, baked at 400°F for 12 minutes with fresh herbs, consume 3 times weekly for essential fatty acids and protein",
-        "Fermented food therapy: 2 tablespoons raw sauerkraut (Bubbies brand) or organic kimchi with each meal for digestive enzymes, probiotics, and vitamin K2",
-        "Antioxidant recovery smoothie: Blend 1 cup frozen wild blueberries + 1 banana + 1 cup coconut milk + 1 tablespoon almond butter + 1 teaspoon spirulina, drink immediately after preparation"
+        "Organic citrus protocol: 2 large navel oranges + 1 whole lemon daily, eat orange with white pith, drink lemon in 16oz warm water on empty stomach",
+        "Healing bone broth: Simmer 3lbs grass-fed beef bones + organic vegetables for 24 hours, strain, drink 8oz warm every 3 hours, store in glass containers",
+        "Nutrient-dense greens: 2 cups raw organic spinach + 1 cup massaged kale with 1 tablespoon olive oil and lemon juice, consume within 30 minutes of preparation",
+        "Golden turmeric paste: Mix 1 teaspoon organic turmeric + 1/4 teaspoon black pepper + 1 tablespoon coconut oil, take with warm milk before bed",
+        "Probiotic powerhouse: 6oz plain Greek yogurt (Fage Total) with 50+ billion CFU, add 1 tablespoon raw honey and 1/4 cup blueberries",
+        "Wild-caught salmon: 4oz Atlantic salmon with skin, baked at 400°F for 12 minutes with herbs, 3 times weekly for omega-3 fatty acids",
+        "Fermented vegetables: 2 tablespoons raw sauerkraut (Bubbies brand) or kimchi with each meal for digestive enzymes and probiotics",
+        "Antioxidant smoothie: Blend 1 cup frozen wild blueberries + 1 banana + 1 cup coconut milk + 1 tablespoon almond butter, drink immediately"
       ],
       medications: [
-        "Acetaminophen (Tylenol Extra Strength) 500mg caplets: Take 2 caplets every 6 hours with 8oz room temperature water and food, maximum 8 caplets in 24 hours, use smartphone timer for consistent dosing schedule",
-        "Ibuprofen (Advil Liqui-Gels) 200mg: Take 2 capsules every 8 hours with full meal and 8oz water, maximum 6 capsules daily, avoid if stomach ulcers, kidney disease, or heart conditions",
-        "Guaifenesin expectorant (Mucinex Extended-Release) 600mg: Take 1 tablet every 12 hours with 8oz water, increase daily fluid intake to 10-12 glasses for optimal mucus thinning effect",
-        "Saline nasal spray (Ocean or Ayr brands): Use 2-3 sprays per nostril every 2-3 hours, tilt head slightly forward, insert gently, breathe in slowly during application for congestion relief",
-        "Zinc gluconate lozenges (Cold-Eeze) 13.3mg: Dissolve 1 lozenge slowly in mouth every 2 hours while awake, maximum 6 daily, take between meals for optimal absorption and immune support"
+        "Acetaminophen (Tylenol Extra Strength) 500mg caplets: Take 2 caplets every 6 hours with 8oz water and food, maximum 8 caplets in 24 hours, set phone alarm for timing",
+        "Ibuprofen (Advil Liqui-Gels) 200mg: Take 2 capsules every 8 hours with full meal and 8oz water, maximum 6 capsules daily, avoid if stomach issues",
+        "Loratadine (Claritin 24-Hour) 10mg tablets: Take 1 tablet daily at same time (preferably morning) with water, can take with or without food",
+        "Guaifenesin (Mucinex Extended-Release) 600mg: Take 1 tablet every 12 hours with 8oz water, drink additional fluids throughout day",
+        "Zinc gluconate lozenges (Cold-Eeze) 13.3mg: Dissolve 1 lozenge slowly in mouth every 2 hours while awake, maximum 6 daily, take between meals"
       ],
       administration: [
-        "Comprehensive medication timing: Take acetaminophen at 8am, 2pm, 8pm with food and full glass water. Take ibuprofen at 6am, 2pm, 10pm with meals. Use medication tracking app with push notifications and alarms",
-        "Advanced hydration protocol: Drink 12-14 glasses (96-112oz) fluids daily - alternate between filtered water, herbal teas, and warm bone broths. Sip 4oz every 30 minutes rather than large amounts at once",
-        "Structured rest and recovery plan: Sleep 8-9 hours nightly with head elevated 30-45 degrees using 2-3 pillows. Take 20-30 minute power naps if needed. Avoid strenuous activity until fever-free 24 hours",
-        "Comprehensive symptom monitoring: Check temperature twice daily (morning/evening), record in health app with pain level (1-10 scale), energy level, appetite changes. Take photos of affected areas for progress tracking",
-        "Environmental optimization strategy: Maintain bedroom 65-68°F with 40-50% humidity using cool-mist humidifier. Use HEPA air purifier if available. Wash hands 20 seconds with soap every 2 hours",
-        "Progressive activity return protocol: Start light stretching day 3-4, add 10-minute walks when energy improves, gradually increase activity. Return to normal routine only when completely symptom-free for 48 hours"
+        "Medication timing protocol: Take all medications with exactly 8oz room temperature water, 30-45 minutes after eating, use smartphone app to track doses and set reminders",
+        "Temperature-controlled compress application: Use digital thermometer to verify 104-108°F, apply for exactly 20 minutes using timer, check skin every 5 minutes",
+        "Structured hydration schedule: Drink 4oz filtered water every 30 minutes while awake, track intake with marked 32oz bottle, increase by 50% if fever present",
+        "Comprehensive symptom monitoring: Record temperature, pain level (1-10), energy level, and appetite twice daily in health app, take photos of affected areas",
+        "Supplement timing coordination: Take natural remedies 30 minutes before or 2 hours after medications, maintain 4-hour gap between different supplements",
+        "Sleep optimization routine: Maintain bedroom at 65-68°F, use blackout curtains, elevate head 30-45 degrees, practice 4-7-8 breathing before sleep"
       ],
-      warning: "Seek immediate emergency medical attention if you experience: fever above 103°F (39.4°C), severe pain rated 8+ on 10-point scale, difficulty breathing or chest tightness, persistent vomiting for more than 24 hours, signs of severe dehydration (dark urine, dizziness, rapid heartbeat), severe headache with neck stiffness, confusion or altered mental state, or if symptoms significantly worsen after 48 hours of treatment. Call 911 immediately for breathing difficulties, chest pain, or loss of consciousness. This AI-generated advice is for informational purposes only and should not replace professional medical consultation with a qualified healthcare provider."
+      warning: "Seek immediate emergency medical attention if you experience: fever above 103°F (39.4°C), severe pain rated 8+ on 10-point scale, difficulty breathing or chest tightness, persistent vomiting for more than 24 hours, signs of severe dehydration (dark urine, dizziness, rapid heartbeat), severe headache with neck stiffness, or if symptoms significantly worsen after 48 hours of treatment. Call 911 for breathing difficulties or chest pain. This AI-generated advice is not a substitute for professional medical care and should not replace consultation with a qualified healthcare provider."
     };
   }
 
