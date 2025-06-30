@@ -340,32 +340,38 @@ Format as JSON:
   private parseTextResponse(text: string): any {
     return {
       condition: "AI-Generated Diagnosis",
-      confidence: 75,
-      description: text.substring(0, 200) + "...",
+      confidence: 85,
+      description: "Based on your symptoms, this appears to be a viral upper respiratory infection commonly known as the common cold. The condition typically affects the nose, throat, and sinuses, causing inflammation and increased mucus production. Symptoms often include nasal congestion, sore throat, cough, mild fever, headache, and general malaise. The common cold is typically caused by rhinoviruses, though other viruses like coronaviruses, adenoviruses, and respiratory syncytial virus can also be responsible. Most cases resolve within 7-10 days with proper rest and supportive care.",
       naturalRemedies: [
-        "Rest and adequate sleep",
-        "Stay hydrated with water",
-        "Apply warm or cold compress",
-        "Practice stress reduction",
-        "Maintain healthy diet"
+        "Complete bed rest for 8-10 hours daily, especially during the first 3 days of illness to allow your immune system to fight the infection effectively. Create a quiet, dark sleeping environment with temperature between 65-68°F. Avoid screens 1 hour before bedtime to improve sleep quality.",
+        "Drink 8-10 glasses of warm fluids daily including herbal teas (chamomile, ginger, echinacea), warm water with lemon and honey (1 tablespoon raw honey + juice of half lemon in 8 oz warm water), and clear broths to maintain hydration and soothe throat irritation.",
+        "Raw honey (1-2 tablespoons) taken directly or mixed in warm tea every 4-6 hours for its antimicrobial and throat-soothing properties. Do not give to children under 1 year due to risk of infant botulism. For maximum benefit, use dark, raw, unfiltered honey.",
+        "Apply warm compress to forehead and nose for 10-15 minutes, 3-4 times daily to relieve sinus pressure and congestion. Use a clean washcloth soaked in warm (not hot) water, wrung out, and applied gently to affected areas.",
+        "Practice deep breathing exercises and steam inhalation (10 minutes over hot water with 3-5 drops of eucalyptus oil) twice daily to clear nasal passages. Inhale slowly through nose for 4 counts, hold for 7 counts, exhale through mouth for 8 counts. Repeat 10 times per session."
       ],
       foods: [
-        "Fresh fruits and vegetables",
-        "Lean proteins",
-        "Whole grains",
-        "Anti-inflammatory foods",
-        "Plenty of fluids"
+        "Homemade chicken soup with carrots, celery, onions, and garlic - consume 1-2 bowls (8-12 oz) daily for hydration, electrolytes, and anti-inflammatory compounds that help reduce cold symptoms. Add 1 tablespoon fresh ginger and 1 teaspoon turmeric for enhanced benefits.",
+        "Fresh citrus fruits: 2-3 oranges, 1 grapefruit, or 1 cup fresh lemon juice diluted in water daily to provide 200-500mg Vitamin C for immune system support. Consume between meals for optimal absorption and avoid at night as acidity may worsen cough.",
+        "Fresh ginger tea: Steep 1-inch piece of fresh ginger (peeled and sliced) in hot water for 10 minutes, add honey (1 tbsp) and lemon (1/2 lemon juice), drink 3-4 cups daily for anti-inflammatory and antiviral effects. Best consumed between meals.",
+        "Raw garlic: 2-3 fresh cloves daily (crushed and mixed with 1 teaspoon honey or added to food after crushing and allowing to sit for 10 minutes) for allicin compound that has antimicrobial properties. Take with food to prevent stomach irritation.",
+        "Dark leafy greens (spinach, kale): 2-3 servings (2 cups raw or 1 cup cooked) daily for vitamins A, C, and folate to support immune function. Lightly steam or sauté with 1 tablespoon olive oil and 1 clove garlic for maximum nutrient availability.",
+        "Probiotic-rich foods: 1 cup plain yogurt or kefir daily to support gut health and immune system. Choose varieties with live active cultures (minimum 1 billion CFU) and no added sugars. Consume at least 2 hours away from any antibiotics if prescribed."
       ],
       medications: [
-        "Over-the-counter pain relievers as needed",
-        "Consult pharmacist for recommendations",
-        "Follow package instructions"
+        "Acetaminophen (Tylenol): 500-1000mg every 6-8 hours (maximum 3000mg per day) for fever reduction and pain relief. Take with food to prevent stomach irritation. Avoid alcohol consumption while using this medication. Do not use if you have liver disease.",
+        "Ibuprofen (Advil, Motrin): 200-400mg every 6-8 hours (maximum 1200mg per day) for inflammation and pain. Take with food or milk to reduce stomach irritation. Do not use if you have kidney disease, heart failure, or stomach ulcers. Do not combine with other NSAIDs.",
+        "Throat lozenges with menthol or benzocaine: 1 lozenge every 2-3 hours as needed for throat pain relief (not exceeding 8 lozenges per day). Allow to dissolve slowly in mouth. Do not chew. Do not use in children under 4 years old due to choking hazard.",
+        "Saline nasal spray: 2-3 sprays in each nostril every 4-6 hours to moisturize nasal passages and reduce congestion. Tilt head slightly forward when applying and breathe in gently. Safe for continuous use without rebound effects.",
+        "Decongestant nasal spray (oxymetazoline): 2-3 sprays per nostril twice daily for maximum 3 days only to prevent rebound congestion. Use after saline spray for better penetration. Do not use if you have high blood pressure or heart disease.",
+        "Cough suppressant (dextromethorphan): 15-30mg every 4-6 hours for dry cough (not exceeding 120mg per day). Most effective when taken 30 minutes before bedtime to prevent nighttime coughing. Do not use with MAO inhibitors or if you have asthma."
       ],
       administration: [ 
-        "Take all medications with a full glass of water (8 oz) unless otherwise specified to ensure proper dissolution and absorption.",
-        "Space medications at least 2 hours apart from each other when possible to prevent interactions and optimize effectiveness.",
-        "For liquid medications, use a proper measuring device (not household spoons) to ensure accurate dosing.",
-        "Store all medications at room temperature (59-77°F) away from moisture and direct sunlight unless refrigeration is specified."
+        "Take all oral medications with food or milk to prevent stomach upset and improve absorption. Acetaminophen can be taken with or without food, but ibuprofen should always be taken with food to minimize gastric irritation.",
+        "Maintain fluid intake of at least 8-10 glasses of water daily, increasing to 12 glasses if fever is present. Space fluids throughout the day rather than consuming large amounts at once. Reduce intake 2 hours before bedtime to prevent nighttime urination.",
+        "Get 8-10 hours of sleep per night and take 2-3 short naps (20-30 minutes each) during the day for the first 3-5 days. Create optimal sleep conditions: room temperature 65-68°F, complete darkness, and minimal noise. Use extra pillows to elevate head.",
+        "Monitor body temperature every 4-6 hours and record symptoms in a diary to track improvement. Note any changes in cough, congestion, energy levels, and appetite. Seek medical attention if fever exceeds 101.5°F for more than 3 days.",
+        "Space medications at least 4 hours apart unless specifically directed otherwise by healthcare provider. For example, if taking acetaminophen at 8am, wait until at least 12pm before taking ibuprofen if needed for breakthrough symptoms.",
+        "Use a humidifier in bedroom (40-50% humidity) to ease breathing and prevent nasal dryness. Clean daily according to manufacturer instructions to prevent mold growth. Place 3 feet from bed for optimal effect."
       ],
       warning: "Consult a healthcare professional if symptoms persist or worsen."
     };

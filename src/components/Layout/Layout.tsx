@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import Footer from './Footer';
 import { useAuth } from '../../contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Heart, Loader } from 'lucide-react';
@@ -87,6 +88,7 @@ const Layout: React.FC = () => {
         <main className="flex-1 overflow-y-auto">
           <div className="p-3 sm:p-4 lg:p-6 max-w-7xl mx-auto bg-gray-50 min-h-full">
             <Outlet />
+            <Footer />
           </div>
         </main>
       </div>

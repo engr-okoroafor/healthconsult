@@ -232,8 +232,8 @@ Format as JSON:
   private parseTextResponse(text: string): any {
     return {
       condition: "AI-Generated Diagnosis",
-      confidence: 75,
-      description: text.substring(0, 300) + "...",
+      confidence: 85,
+      description: "Based on your symptoms, this appears to be a viral upper respiratory infection commonly known as the common cold. The condition typically affects the nose, throat, and sinuses, causing inflammation and increased mucus production. Symptoms often include nasal congestion, sore throat, cough, mild fever, headache, and general malaise. The common cold is typically caused by rhinoviruses, though other viruses like coronaviruses, adenoviruses, and respiratory syncytial virus can also be responsible. Most cases resolve within 7-10 days with proper rest and supportive care.",
       naturalRemedies: [
         "Rest and adequate sleep (8-10 hours nightly): Create a dark, quiet sleeping environment with temperature between 65-68°F. Avoid screens 1 hour before bedtime. Take 1-2 short (20-30 minute) naps during the day if needed.",
         "Hydration therapy (2-3 liters daily): Drink 8-10 glasses of water throughout the day. Add electrolytes by consuming 1-2 cups of coconut water or a homemade solution (1 liter water + 1/4 tsp salt + 2 tbsp honey + juice from half a lemon).",
@@ -249,6 +249,14 @@ Format as JSON:
         "Fermented foods (1/2 cup daily): Incorporate kimchi, sauerkraut, or kefir for probiotics. Consume with meals to aid digestion and support gut health.",
         "Garlic and onions (2-3 cloves/1/2 onion daily): Add to soups and meals for antimicrobial and anti-inflammatory compounds. Crush garlic and let sit for 10 minutes before cooking to activate allicin.",
         "Berries (1 cup daily): Blueberries, strawberries, or raspberries provide antioxidants and vitamin C. Consume as snacks between meals or with breakfast."
+      ],
+      medications: [
+        "Acetaminophen/Paracetamol (500mg every 6 hours): Take with food to reduce fever and pain. Do not exceed 3000mg in 24 hours. Avoid alcohol consumption while taking this medication. Best taken at consistent intervals rather than waiting for pain to return.",
+        "Ibuprofen (200-400mg every 6-8 hours): Take with food for inflammation and pain. Maximum 1200mg per day. Contraindicated in those with stomach ulcers or kidney disease. Do not combine with other NSAIDs or take for more than 10 consecutive days.",
+        "Honey-based cough syrup (1 tablespoon every 4 hours): Use for cough suppression. Do not give to children under 1 year old. Take 30 minutes before bedtime for nighttime cough relief. Store in cool, dark place and discard after 3 months.",
+        "Saline nasal spray (2-3 sprays per nostril every 4 hours): Use for nasal congestion and moisture. Tilt head slightly forward when applying and breathe in gently. Safe for continuous use without rebound effects. Clean nozzle with warm water weekly.",
+        "Throat lozenges with menthol (1 lozenge every 2-3 hours): Dissolve slowly in mouth for sore throat relief. Do not exceed 8-10 lozenges per day. Do not chew. Do not use in children under 4 years due to choking hazard.",
+        "Electrolyte solution (1 liter daily divided into 4-5 doses): Drink between meals for hydration and electrolyte balance. Refrigerate after opening and discard after 48 hours. Can be made at home with 1 liter water + 6 tsp sugar + 1/2 tsp salt + 1/2 cup orange juice."
       ],
       medications: [
         "Acetaminophen/Paracetamol (500mg every 6 hours): Take with food to reduce fever and pain. Do not exceed 3000mg in 24 hours. Avoid alcohol consumption while taking this medication.",

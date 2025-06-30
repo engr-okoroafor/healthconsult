@@ -3,11 +3,9 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
   Activity, 
+  Activity, 
   Heart, 
-  Users, 
-  Clock,
-  TrendingUp,
-  AlertCircle,
+  Users,
   AlertTriangle,
   CheckCircle,
   MessageSquare,
@@ -19,6 +17,7 @@ import {
   Stethoscope,
   ShoppingCart
 } from 'lucide-react';
+import BoltBadge from '../components/BoltBadge';
 import PurchaseModal from '../components/PurchaseModal';
 
 const Dashboard: React.FC = () => {
@@ -131,10 +130,17 @@ const Dashboard: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.5 }} 
           >
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Community Health Dashboard</h1>
-            <p className="text-gray-600">Your AI-powered community doctor is here to help with symptoms, diagnosis, and natural treatments.</p>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-800 mb-2">Community Health Dashboard</h1>
+                <p className="text-gray-600">Your AI-powered community doctor is here to help with symptoms, diagnosis, and natural treatments.</p>
+              </div>
+              <div className="mt-4 md:mt-0">
+                <BoltBadge />
+              </div>
+            </div>
           </motion.div>
 
           {/* Stats Grid */}
