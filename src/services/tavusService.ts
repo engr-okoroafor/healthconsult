@@ -20,6 +20,11 @@ class TavusService {
 
   async getReplicaStatus(replicaId: string): Promise<any> {
     try {
+      if (!this.isConfigured()) {
+        console.warn('Tavus API key not configured, returning mock status');
+        return { status: 'completed', message: 'Demo mode - replica ready' };
+      }
+
       const response = await fetch(`${this.baseURL}/replicas/${replicaId}`, {
         method: 'GET',
         headers: {
@@ -29,7 +34,18 @@ class TavusService {
       });
 
       if (!response.ok) {
-        throw new Error(`Tavus API error: ${response.statusText}`);
+        let errorMessage = `Tavus API error: ${response.status} ${response.statusText}`;
+        try {
+          const errorBody = await response.text();
+          if (errorBody) {
+            console.error('Tavus API error body:', errorBody);
+            errorMessage += ` - ${errorBody}`;
+          }
+        } catch (parseError) {
+          console.error('Could not parse Tavus error response:', parseError);
+        }
+        console.error('Full Tavus error details:', { status: response.status, statusText: response.statusText, url: response.url });
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -42,6 +58,15 @@ class TavusService {
 
   async startConsultation(replicaId: string, personaId: string): Promise<any> {
     try {
+      if (!this.isConfigured()) {
+        console.warn('Tavus API key not configured, returning mock conversation');
+        return { 
+          conversation_id: `demo_${Date.now()}`,
+          status: 'active',
+          message: 'Demo conversation started'
+        };
+      }
+
       const response = await fetch(`${this.baseURL}/conversations`, {
         method: 'POST',
         headers: {
@@ -56,7 +81,18 @@ class TavusService {
       });
 
       if (!response.ok) {
-        throw new Error(`Tavus API error: ${response.statusText}`);
+        let errorMessage = `Tavus API error: ${response.status} ${response.statusText}`;
+        try {
+          const errorBody = await response.text();
+          if (errorBody) {
+            console.error('Tavus API error body:', errorBody);
+            errorMessage += ` - ${errorBody}`;
+          }
+        } catch (parseError) {
+          console.error('Could not parse Tavus error response:', parseError);
+        }
+        console.error('Full Tavus error details:', { status: response.status, statusText: response.statusText, url: response.url });
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -116,6 +152,10 @@ class TavusService {
 
   async getConversationStatus(conversationId: string): Promise<any> {
     try {
+      if (!this.isConfigured()) {
+        return { status: 'active', message: 'Demo conversation status' };
+      }
+
       const response = await fetch(`${this.baseURL}/conversations/${conversationId}`, {
         method: 'GET',
         headers: {
@@ -125,7 +165,18 @@ class TavusService {
       });
 
       if (!response.ok) {
-        throw new Error(`Tavus API error: ${response.statusText}`);
+        let errorMessage = `Tavus API error: ${response.status} ${response.statusText}`;
+        try {
+          const errorBody = await response.text();
+          if (errorBody) {
+            console.error('Tavus API error body:', errorBody);
+            errorMessage += ` - ${errorBody}`;
+          }
+        } catch (parseError) {
+          console.error('Could not parse Tavus error response:', parseError);
+        }
+        console.error('Full Tavus error details:', { status: response.status, statusText: response.statusText, url: response.url });
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
