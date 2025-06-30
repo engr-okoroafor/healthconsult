@@ -59,11 +59,23 @@ class TavusService {
   async startConsultation(replicaId: string, personaId: string): Promise<any> {
     try {
       if (!this.isConfigured()) {
-        console.warn('Tavus API key not configured, returning mock conversation');
+        console.warn('Tavus API key not configured, returning mock conversation for replica:', replicaId);
         return { 
           conversation_id: `demo_${Date.now()}`,
           status: 'active',
-          message: 'Demo conversation started'
+          message: 'Demo conversation started',
+          video_url: null
+        };
+      }
+
+      // Check if this is a demo replica ID
+      if (replicaId.startsWith('demo-replica-') || personaId.startsWith('demo-persona-')) {
+        console.warn('Demo IDs detected, returning mock conversation:', { replicaId, personaId });
+        return { 
+          conversation_id: `demo_${Date.now()}`,
+          status: 'active',
+          message: 'Demo conversation started with demo replica',
+          video_url: null
         };
       }
 
