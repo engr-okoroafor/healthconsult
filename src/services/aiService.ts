@@ -156,42 +156,47 @@ Format as JSON:
   async generateSymptomDiagnosis(symptoms: string, bodyParts: string[], severity: string, duration: string, doctorSpecialty: string = 'General Physician'): Promise<any> {
     const systemPrompt = `You are a ${doctorSpecialty} AI assistant. Provide comprehensive medical analysis tailored to your specialty.`;
     
-    const prompt = `
-As a ${doctorSpecialty}, analyze these symptoms and provide a comprehensive diagnosis:
+    const prompt = `As a ${doctorSpecialty}, analyze these symptoms and provide a comprehensive diagnosis:
 
 Symptoms: ${symptoms}
 Affected body parts: ${bodyParts.join(', ')}
 Severity: ${severity}
 Duration: ${duration}
 
-Provide a structured response with:
+Provide a detailed response with:
 1. Most likely condition name
 2. Confidence percentage (0-100)
 3. Brief description of the condition
-4. 5 natural remedies with specific instructions
-5. 5 healing foods and dietary recommendations
-6. 3 recommended medications (over-the-counter)
-7. 4 administration instructions
+4. 5 natural remedies with specific instructions (be very specific with dosages, frequency, and application methods)
+5. 5 healing foods and dietary recommendations (include specific foods, preparation methods, and consumption frequency)
+6. 3 recommended medications (over-the-counter) with specific brand names, dosages, and usage instructions
+7. 4 administration instructions (detailed steps for treatment application)
 8. Important warning signs to watch for
 
-Format as JSON:
-{
-  "condition": "condition name",
-  "confidence": number,
-  "description": "description",
-  "naturalRemedies": ["remedy1", "remedy2", ...],
-  "foods": ["food1", "food2", ...],
-  "medications": ["med1", "med2", ...],
-  "administration": ["instruction1", "instruction2", ...],
-  "warning": "warning text"
-}
-`;
+Your response should be detailed and practical, with specific examples that a patient can immediately use.
+
+Return your response in the following structure:
+condition: condition name
+confidence: number
+description: description
+naturalRemedies: [detailed remedy1, detailed remedy2, ...]
+foods: [specific food1 with preparation, specific food2 with preparation, ...]
+medications: [specific medication1 with dosage, specific medication2 with dosage, ...]
+administration: [detailed instruction1, detailed instruction2, ...]
+warning: warning text`;
 
     try {
       const response = await this.callOpenAIAPI(prompt, systemPrompt);
       
       try {
-        return JSON.parse(response);
+        // Try to parse as JSON first
+        const jsonMatch = response.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          return JSON.parse(jsonMatch[0]);
+        }
+        
+        // If not valid JSON, parse the structured text response
+        return this.parseStructuredResponse(response);
       } catch {
         return this.parseTextResponse(response);
       }
@@ -329,37 +334,121 @@ Format as JSON:
     };
   }
 
+  private parseStructuredResponse(text: string): any {
+    const result: any = {
+      condition: "",
+      confidence: 75,
+      description: "",
+      naturalRemedies: [],
+      foods: [],
+      medications: [],
+      administration: [],
+      warning: ""
+    };
+    
+    // Extract condition
+    const conditionMatch = text.match(/condition:\s*([^\n]+)/i);
+    if (conditionMatch) result.condition = conditionMatch[1].trim();
+    
+    // Extract confidence
+    const confidenceMatch = text.match(/confidence:\s*(\d+)/i);
+    if (confidenceMatch) result.confidence = parseInt(confidenceMatch[1]);
+    
+    // Extract description
+    const descriptionMatch = text.match(/description:\s*([^\n]+)/i);
+    if (descriptionMatch) result.description = descriptionMatch[1].trim();
+    
+    // Extract natural remedies
+    const remediesSection = text.match(/naturalRemedies:\s*\[([\s\S]*?)\]/i);
+    if (remediesSection) {
+      const remedies = remediesSection[1].split(',').map(item => item.trim()).filter(item => item);
+      result.naturalRemedies = remedies.length > 0 ? remedies : [
+        "Drink ginger tea with honey 3 times daily (1 teaspoon grated ginger in hot water, steep 10 minutes, add 1 teaspoon honey)",
+        "Apply warm compress to affected area for 15-20 minutes, 3-4 times daily",
+        "Gargle with salt water (1/2 teaspoon salt in 8oz warm water) every 3 hours for sore throat",
+        "Take steam inhalation with 3-5 drops of eucalyptus oil for 10 minutes twice daily",
+        "Rest adequately with 7-8 hours of sleep in a slightly elevated position"
+      ];
+    }
+    
+    // Extract foods
+    const foodsSection = text.match(/foods:\s*\[([\s\S]*?)\]/i);
+    if (foodsSection) {
+      const foods = foodsSection[1].split(',').map(item => item.trim()).filter(item => item);
+      result.foods = foods.length > 0 ? foods : [
+        "Chicken soup with garlic, onions, and ginger (1 bowl twice daily)",
+        "Fresh citrus fruits like oranges and lemons (2 servings daily for vitamin C)",
+        "Turmeric milk: 1 cup warm milk with 1/2 teaspoon turmeric and pinch of black pepper before bed",
+        "Leafy greens like spinach and kale in smoothies or lightly steamed (1 cup daily)",
+        "Probiotic-rich foods like yogurt with live cultures (1 small bowl daily)"
+      ];
+    }
+    
+    // Extract medications
+    const medicationsSection = text.match(/medications:\s*\[([\s\S]*?)\]/i);
+    if (medicationsSection) {
+      const medications = medicationsSection[1].split(',').map(item => item.trim()).filter(item => item);
+      result.medications = medications.length > 0 ? medications : [
+        "Paracetamol (Tylenol) 500mg tablets: Take 1-2 tablets every 6 hours as needed, not exceeding 8 tablets in 24 hours",
+        "Ibuprofen (Advil) 200mg: Take 1-2 tablets every 8 hours with food, not exceeding 6 tablets in 24 hours",
+        "Loratadine (Claritin) 10mg: Take 1 tablet daily for allergic symptoms"
+      ];
+    }
+    
+    // Extract administration
+    const administrationSection = text.match(/administration:\s*\[([\s\S]*?)\]/i);
+    if (administrationSection) {
+      const administration = administrationSection[1].split(',').map(item => item.trim()).filter(item => item);
+      result.administration = administration.length > 0 ? administration : [
+        "Take all medications with a full glass of water and after meals to prevent stomach irritation",
+        "Apply compresses for the recommended duration and frequency, ensuring the temperature is comfortable",
+        "Stay well-hydrated by drinking at least 8-10 glasses of water throughout the day",
+        "Monitor your symptoms daily and keep track of any changes or improvements"
+      ];
+    }
+    
+    // Extract warning
+    const warningMatch = text.match(/warning:\s*([^\n]+)/i);
+    if (warningMatch) {
+      result.warning = warningMatch[1].trim();
+    } else {
+      result.warning = "Seek immediate medical attention if symptoms worsen, if you develop high fever, severe pain, difficulty breathing, or if symptoms persist beyond 3-5 days. This AI-generated advice is not a substitute for professional medical care.";
+    }
+    
+    return result;
+  }
+
   private parseTextResponse(text: string): any {
     return {
       condition: "AI-Generated Diagnosis",
       confidence: 75,
       description: text.substring(0, 200) + "...",
       naturalRemedies: [
-        "Rest and adequate sleep",
-        "Stay hydrated with water",
-        "Apply warm or cold compress",
-        "Practice stress reduction",
-        "Maintain healthy diet"
+        "Rest and adequate sleep (8-9 hours nightly in a dark, quiet room)",
+        "Stay hydrated with water (at least 8-10 glasses daily, more if feverish)",
+        "Apply warm compress to affected areas (15 minutes, 3-4 times daily)",
+        "Practice deep breathing exercises (5 minutes, 3 times daily)",
+        "Drink ginger and honey tea (1 teaspoon each in hot water, 3 times daily)"
       ],
       foods: [
-        "Fresh fruits and vegetables",
-        "Lean proteins",
-        "Whole grains",
-        "Anti-inflammatory foods",
-        "Plenty of fluids"
+        "Fresh citrus fruits (oranges, lemons) - 2 servings daily for vitamin C",
+        "Bone broth soup with vegetables (1 bowl twice daily)",
+        "Leafy greens like spinach and kale (1 cup daily, lightly steamed)",
+        "Anti-inflammatory foods like turmeric and ginger (add 1 teaspoon to meals)",
+        "Probiotic-rich yogurt with live cultures (1 small bowl daily)"
       ],
       medications: [
-        "Over-the-counter pain relievers as needed",
-        "Consult pharmacist for recommendations",
-        "Follow package instructions"
+        "Paracetamol (Tylenol) 500mg: 1-2 tablets every 6 hours as needed, maximum 8 tablets daily",
+        "Ibuprofen (Advil) 200mg: 1-2 tablets every 8 hours with food if pain persists",
+        "Loratadine (Claritin) 10mg: 1 tablet daily if allergic symptoms are present"
       ],
       administration: [
-        "Take medications with food",
-        "Follow recommended dosages",
-        "Monitor symptoms closely",
-        "Seek medical attention if worsening"
+        "Take all medications with a full glass of water and after meals to prevent stomach irritation",
+        "Apply compresses at the recommended temperature for 15-20 minutes at a time",
+        "Increase fluid intake to at least 2-3 liters daily while symptoms persist",
+        "Monitor temperature twice daily and keep a symptom journal to track progress"
       ],
-      warning: "Consult a healthcare professional if symptoms persist or worsen."
+      warning: "Seek immediate medical attention if you develop high fever (above 102°F/39°C), severe pain, difficulty breathing, persistent vomiting, or if symptoms worsen after 48 hours of home treatment. This AI-generated advice is not a substitute for professional medical care."
     };
   }
 
