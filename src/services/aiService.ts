@@ -2,13 +2,13 @@ class AIService {
   private getApiKey(): string | null {
     // Check environment variable first
     const envKey = import.meta.env.VITE_OPENAI_API_KEY;
-    if (envKey && envKey.trim()) {
+    if (envKey && envKey.trim() && envKey.length > 10) {
       return envKey.trim();
     }
     
     // Fallback to localStorage (for settings override)
     const storedKey = localStorage.getItem('openai_api_key');
-    if (storedKey && storedKey.trim()) {
+    if (storedKey && storedKey.trim() && storedKey.length > 10) {
       return storedKey.trim();
     }
     
@@ -573,7 +573,8 @@ Format as JSON:
   }
 
   isConfigured(): boolean {
-    return !!this.getApiKey();
+    const apiKey = this.getApiKey();
+    return !!apiKey && apiKey.length > 10;
   }
 }
 

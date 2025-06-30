@@ -3,14 +3,20 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import Footer from './Footer';
+import Footer from './Footer';
 import { useAuth } from '../../contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Heart, Loader } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 
 const Layout: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  
+  // Check if current route is privacy or terms
+  const isFullPageRoute = ['/privacy', '/terms'].includes(location.pathname);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -46,6 +52,11 @@ const Layout: React.FC = () => {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Return full page content for privacy and terms pages
+  if (isFullPageRoute) {
+    return <Outlet />;
   }
 
   return (
@@ -89,6 +100,7 @@ const Layout: React.FC = () => {
           <div className="p-3 sm:p-4 lg:p-6 max-w-7xl mx-auto bg-gray-50 min-h-full">
             <Outlet />
             <Footer />
+          <Footer />
           </div>
         </main>
       </div>

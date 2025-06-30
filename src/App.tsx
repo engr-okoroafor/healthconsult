@@ -8,6 +8,8 @@ import PhotoDiagnosis from './pages/PhotoDiagnosis';
 import TreatmentPlans from './pages/TreatmentPlans';
 import HealthEducation from './pages/HealthEducation';
 import EmergencyGuide from './pages/EmergencyGuide';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 import Pricing from './pages/Pricing';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
@@ -30,6 +32,8 @@ function App() {
                 <Route path="photo-diagnosis" element={<PhotoDiagnosis />} />
                 <Route path="treatments" element={<TreatmentPlans />} />
                 <Route path="education" element={<HealthEducation />} />
+                <Route path="privacy" element={<Privacy />} />
+                <Route path="terms" element={<Terms />} />
                 <Route path="emergency" element={<EmergencyGuide />} />
                 <Route path="pricing" element={<Pricing />} />
                 <Route path="settings" element={<Settings />} />

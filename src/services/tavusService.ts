@@ -10,15 +10,25 @@ class TavusService {
   private getApiKey(): string {
     // Check localStorage first (for settings override)
     const storedKey = localStorage.getItem('tavus_api_key');
-    if (storedKey && storedKey.trim()) {
+    if (storedKey && storedKey.trim() && storedKey.length > 10) {
       return storedKey.trim();
     }
     
     // Fallback to environment variable
-    return import.meta.env.VITE_TAVUS_API_KEY || '';
+    const envKey = import.meta.env.VITE_TAVUS_API_KEY || '';
+    return envKey;
   }
 
   async getReplicaStatus(replicaId: string): Promise<any> {
+    // For demo purposes, return mock data if API key is not configured
+    if (!this.isConfigured()) {
+      return {
+        id: replicaId,
+        status: 'completed',
+        thumbnail_video_url: null
+      };
+    }
+    
     try {
       const response = await fetch(`${this.baseURL}/replicas/${replicaId}`, {
         method: 'GET',
@@ -41,6 +51,15 @@ class TavusService {
   }
 
   async startConsultation(replicaId: string, personaId: string): Promise<any> {
+    // For demo purposes, return mock data if API key is not configured
+    if (!this.isConfigured()) {
+      return {
+        conversation_id: `demo-${Date.now()}`,
+        status: 'active',
+        video_url: null
+      };
+    }
+    
     try {
       const response = await fetch(`${this.baseURL}/conversations`, {
         method: 'POST',
@@ -68,6 +87,13 @@ class TavusService {
   }
 
   async endConsultation(conversationId: string): Promise<any> {
+    // For demo purposes, return mock data if API key is not configured
+    if (!this.isConfigured() || conversationId.startsWith('demo-')) {
+      return {
+        status: 'ended'
+      };
+    }
+    
     try {
       const response = await fetch(`${this.baseURL}/conversations/${conversationId}/end`, {
         method: 'POST',
@@ -114,7 +140,8 @@ class TavusService {
   }
 
   isConfigured(): boolean {
-    return !!this.apiKey && this.apiKey.length > 10;
+    const apiKey = this.getApiKey();
+    return !!apiKey && apiKey.length > 10;
   }
 }
 
