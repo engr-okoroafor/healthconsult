@@ -19,7 +19,7 @@ import {
   Loader,
   ShoppingCart
 } from 'lucide-react';
-import { geminiService } from '../services/geminiService';
+import { aiService } from '../services/aiService';
 import PurchaseModal from '../components/PurchaseModal';
 
 const HealthEducation: React.FC = () => {
@@ -161,8 +161,8 @@ const HealthEducation: React.FC = () => {
     setSelectedArticle(content);
 
     try {
-      if (geminiService.isConfigured()) {
-        const article = await geminiService.generateHealthArticle(content.aiTopic);
+      if (aiService.isConfigured()) {
+        const article = await aiService.generateHealthArticle(content.aiTopic);
         setGeneratedArticle(article);
       } else {
         // Demo content
@@ -213,10 +213,10 @@ const HealthEducation: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-      > 
+      >
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Health Education Center</h1>
         <p className="text-gray-600">Learn about natural health, nutrition, and wellness through our comprehensive educational resources.</p>
-        {!geminiService.isConfigured() && (
+        {!aiService.isConfigured() && (
           <div className="mt-2 p-3 bg-yellow-100 border-2 border-yellow-300 rounded-lg">
             <p className="text-sm text-yellow-800">
               <strong>Demo Mode:</strong> Configure API keys in Settings → AI Configuration for personalized AI-generated health articles.
@@ -270,9 +270,9 @@ const HealthEducation: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="backdrop-blur-md bg-glass-white rounded-2xl border-2 border-medical-primary/20 shadow-medical p-6"
         >
-          <div className="flex items-center justify-between mb-6"> 
+          <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-800">
-              {geminiService.isConfigured() ? 'AI-Generated Article' : 'Demo Article'}: {generatedArticle.title}
+              {aiService.isConfigured() ? 'AI-Generated Article' : 'Demo Article'}: {generatedArticle.title}
             </h2>
             <button
               onClick={() => setGeneratedArticle(null)}

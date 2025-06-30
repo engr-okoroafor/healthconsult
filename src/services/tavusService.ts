@@ -69,36 +69,24 @@ class TavusService {
 
   async endConsultation(conversationId: string): Promise<any> {
     try {
-      // Check if API key is configured
-      if (!this.isConfigured()) {
-        console.log('Tavus API not configured, simulating successful end conversation');
-        return { success: true };
-      }
-      
-      try {
-        const response = await fetch(`${this.baseURL}/conversations/${conversationId}/end`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': this.apiKey
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`Tavus API error: ${response.statusText}`);
+      const response = await fetch(`${this.baseURL}/conversations/${conversationId}/end`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': this.apiKey
         }
+      });
 
-        // Handle empty response
-        const text = await response.text();
-        const data = text ? JSON.parse(text) : { success: true };
-        return data;
-      } catch (error) {
-        console.error('Tavus API call failed, returning success anyway:', error);
-        return { success: true };
+      if (!response.ok) {
+        throw new Error(`Tavus API error: ${response.statusText}`);
       }
+
+      // Handle empty response
+      const text = await response.text();
+      return text ? JSON.parse(text) : { success: true };
     } catch (error) {
       console.error('Tavus consultation end failed:', error);
-      // Return success anyway to prevent UI from getting stuck
+      // Return success to prevent UI from getting stuck
       return { success: true };
     }
   }

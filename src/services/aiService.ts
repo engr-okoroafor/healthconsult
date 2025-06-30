@@ -1,15 +1,15 @@
 class AIService {
   private getApiKey(): string | null {
-    // Check localStorage for settings override
-    const storedKey = localStorage.getItem('openai_api_key');
-    if (storedKey && storedKey.trim()) {
-      return storedKey.trim();
-    }
-    
-    // Fallback to environment variable
+    // Check environment variable first
     const envKey = import.meta.env.VITE_OPENAI_API_KEY;
     if (envKey && envKey.trim()) {
       return envKey.trim();
+    }
+    
+    // Fallback to localStorage (for settings override)
+    const storedKey = localStorage.getItem('openai_api_key');
+    if (storedKey && storedKey.trim()) {
+      return storedKey.trim();
     }
     
     return null;
@@ -143,7 +143,9 @@ Format as JSON:
       const content = data.choices[0].message.content;
       
       try {
-        return JSON.parse(content);
+        const result = JSON.parse(content);
+        // Ensure the response has all the required fields with detailed content
+        return this.enhanceImageResponse(result);
       } catch {
         return this.parseImageAnalysisResponse(content, doctorSpecialty);
       }
@@ -191,7 +193,9 @@ Format as JSON:
       const response = await this.callOpenAIAPI(prompt, systemPrompt);
       
       try {
-        return JSON.parse(response);
+        const result = JSON.parse(response);
+        // Ensure the response has all the required fields with detailed content
+        return this.enhanceResponse(result);
       } catch {
         return this.parseTextResponse(response);
       }
@@ -241,7 +245,9 @@ Format as JSON:
       const response = await this.callOpenAIAPI(prompt, systemPrompt);
       
       try {
-        return JSON.parse(response);
+        const result = JSON.parse(response);
+        // Ensure the response has all the required fields with detailed content
+        return this.enhanceTreatmentResponse(result);
       } catch {
         return this.parseTreatmentResponse(response);
       }
@@ -281,7 +287,9 @@ Format as JSON:
       const response = await this.callOpenAIAPI(prompt, systemPrompt);
       
       try {
-        return JSON.parse(response);
+        const result = JSON.parse(response);
+        // Ensure the response has all the required fields with detailed content
+        return this.enhanceArticleResponse(result);
       } catch {
         return this.parseArticleResponse(response, topic);
       }
@@ -453,6 +461,109 @@ Format as JSON:
       ],
       seekHelp: "Seek immediate medical attention if symptoms are severe, persistent, or worsening. Specifically contact healthcare providers if you experience: fever above 101.5°F lasting more than 3 days, severe pain rated 7/10 or higher, difficulty breathing or chest pain, persistent vomiting preventing fluid intake, signs of dehydration (dizziness, dark urine, dry mouth), or any symptoms that interfere with daily activities for more than 5 days. For chronic conditions, consult a healthcare provider if you notice changing patterns, new symptoms, or decreased response to usual treatments. Always seek professional guidance before making significant changes to your health regimen, especially if you have existing medical conditions, take prescription medications, or are pregnant/nursing."
     };
+  }
+
+  private enhanceResponse(response: any): any {
+    // Make sure we have all the required fields with detailed content
+    const enhancedResponse = { ...response };
+    
+    // Ensure naturalRemedies has detailed instructions
+    if (!enhancedResponse.naturalRemedies || enhancedResponse.naturalRemedies.length < 5) {
+      enhancedResponse.naturalRemedies = this.parseTextResponse('').naturalRemedies;
+    }
+    
+    // Ensure foods has detailed recommendations
+    if (!enhancedResponse.foods || enhancedResponse.foods.length < 5) {
+      enhancedResponse.foods = this.parseTextResponse('').foods;
+    }
+    
+    // Ensure medications has detailed instructions
+    if (!enhancedResponse.medications || enhancedResponse.medications.length < 3) {
+      enhancedResponse.medications = this.parseTextResponse('').medications;
+    }
+    
+    // Ensure administration has detailed instructions
+    if (!enhancedResponse.administration || enhancedResponse.administration.length < 4) {
+      enhancedResponse.administration = this.parseTextResponse('').administration;
+    }
+    
+    return enhancedResponse;
+  }
+  
+  private enhanceTreatmentResponse(response: any): any {
+    // Make sure we have all the required fields with detailed content
+    const enhancedResponse = { ...response };
+    
+    // Ensure lifecyclePhases has detailed descriptions
+    if (!enhancedResponse.lifecyclePhases || !enhancedResponse.lifecyclePhases.phase1) {
+      enhancedResponse.lifecyclePhases = this.parseTreatmentResponse('').lifecyclePhases;
+    }
+    
+    // Ensure naturalRemedies has detailed instructions
+    if (!enhancedResponse.naturalRemedies || enhancedResponse.naturalRemedies.length < 5) {
+      enhancedResponse.naturalRemedies = this.parseTreatmentResponse('').naturalRemedies;
+    }
+    
+    // Ensure foods has detailed recommendations
+    if (!enhancedResponse.foods || enhancedResponse.foods.length < 5) {
+      enhancedResponse.foods = this.parseTreatmentResponse('').foods;
+    }
+    
+    // Ensure medications has detailed instructions
+    if (!enhancedResponse.medications || enhancedResponse.medications.length < 3) {
+      enhancedResponse.medications = this.parseTreatmentResponse('').medications;
+    }
+    
+    return enhancedResponse;
+  }
+  
+  private enhanceImageResponse(response: any): any {
+    // Make sure we have all the required fields with detailed content
+    const enhancedResponse = { ...response };
+    
+    // Ensure findings has detailed descriptions
+    if (!enhancedResponse.findings || enhancedResponse.findings.length === 0) {
+      enhancedResponse.findings = this.parseImageAnalysisResponse('', 'Specialist').findings;
+    }
+    
+    // Ensure naturalRemedies has detailed instructions
+    if (!enhancedResponse.naturalRemedies || enhancedResponse.naturalRemedies.length < 5) {
+      enhancedResponse.naturalRemedies = this.parseImageAnalysisResponse('', 'Specialist').naturalRemedies;
+    }
+    
+    // Ensure foods has detailed recommendations
+    if (!enhancedResponse.foods || enhancedResponse.foods.length < 5) {
+      enhancedResponse.foods = this.parseImageAnalysisResponse('', 'Specialist').foods;
+    }
+    
+    // Ensure medications has detailed instructions
+    if (!enhancedResponse.medications || enhancedResponse.medications.length < 3) {
+      enhancedResponse.medications = this.parseImageAnalysisResponse('', 'Specialist').medications;
+    }
+    
+    return enhancedResponse;
+  }
+  
+  private enhanceArticleResponse(response: any): any {
+    // Make sure we have all the required fields with detailed content
+    const enhancedResponse = { ...response };
+    
+    // Ensure keyPoints has detailed descriptions
+    if (!enhancedResponse.keyPoints || enhancedResponse.keyPoints.length < 5) {
+      enhancedResponse.keyPoints = this.parseArticleResponse('', 'health').keyPoints;
+    }
+    
+    // Ensure naturalTreatments has detailed instructions
+    if (!enhancedResponse.naturalTreatments || enhancedResponse.naturalTreatments.length < 5) {
+      enhancedResponse.naturalTreatments = this.parseArticleResponse('', 'health').naturalTreatments;
+    }
+    
+    // Ensure prevention has detailed recommendations
+    if (!enhancedResponse.prevention || enhancedResponse.prevention.length < 4) {
+      enhancedResponse.prevention = this.parseArticleResponse('', 'health').prevention;
+    }
+    
+    return enhancedResponse;
   }
 
   isConfigured(): boolean {

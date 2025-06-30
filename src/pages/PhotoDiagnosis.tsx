@@ -23,7 +23,7 @@ import PurchaseModal from '../components/PurchaseModal';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { tavusService } from '../services/tavusService';
-import { geminiService } from '../services/geminiService';
+import { aiService } from '../services/aiService';
 import toast from 'react-hot-toast';
 
 interface Doctor {
@@ -113,14 +113,14 @@ const PhotoDiagnosis: React.FC = () => {
     try {
       const { error } = await supabase
         .from('consultations')
-        .insert([{
+        .insert({
           user_id: user?.id,
-          doctor_id: selectedDoctor?.tavus_replica_id,
+          doctor_id: selectedDoctor?.id,
           doctor_type: selectedDoctor?.specialty || 'Radiologist',
           symptoms: `Image analysis consultation for ${selectedBodyPart || 'unknown body part'}`,
           tavus_conversation_id: conversationId,
           status: 'active'
-        }]);
+        });
 
       if (error) throw error;
     } catch (error) {
@@ -163,7 +163,7 @@ const PhotoDiagnosis: React.FC = () => {
     setIsAnalyzing(true);
     
     try {
-      if (geminiService.isConfigured()) {
+      if (aiService.isConfigured()) {
         // Convert image to base64
         const file = uploadedImages[0];
         const reader = new FileReader();
@@ -173,7 +173,7 @@ const PhotoDiagnosis: React.FC = () => {
             const base64 = e.target?.result as string;
             const base64Data = base64.split(',')[1]; // Remove data:image/jpeg;base64, prefix
             
-            const result = await geminiService.analyzeImage(
+            const result = await aiService.analyzeImage(
               base64Data,
               selectedDoctor?.specialty || 'Radiologist',
               [selectedBodyPart],
@@ -252,13 +252,13 @@ const PhotoDiagnosis: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-      > 
+      >
         <h1 className="text-3xl font-bold text-gray-800 mb-2">AI Photo Diagnosis</h1>
         <p className="text-gray-600">Upload medical images for AI-powered visual diagnosis and comprehensive treatment recommendations.</p>
-        {!geminiService.isConfigured() && (
+        {!aiService.isConfigured() && (
           <div className="mt-2 p-3 bg-yellow-100 border-2 border-yellow-300 rounded-lg">
             <p className="text-sm text-yellow-800">
-              <strong>Demo Mode:</strong> Configure Gemini API key in environment variables for real AI-powered image analysis.
+              <strong>Demo Mode:</strong> Configure OpenAI API key in environment variables for real AI-powered image analysis.
             </p>
           </div>
         )}
@@ -400,8 +400,8 @@ const PhotoDiagnosis: React.FC = () => {
               >
                 {isAnalyzing ? (
                   <>
-                    <Loader className="animate-spin h-4 w-4 mr-2" /> 
-                    {geminiService.isConfigured() ? 'AI Analyzing Images...' : 'Generating Demo Analysis...'}
+                    <Loader className="animate-spin h-4 w-4 mr-2" />
+                    {aiService.isConfigured() ? 'AI Analyzing Images...' : 'Generating Demo Analysis...'}
                   </>
                 ) : (
                   <>
@@ -436,8 +436,8 @@ const PhotoDiagnosis: React.FC = () => {
           {isAnalyzing && (
             <div className="text-center py-12">
               <div className="animate-spin mx-auto h-12 w-12 border-4 border-medical-primary border-t-transparent rounded-full mb-4"></div>
-              <p className="text-gray-800 font-medium"> 
-                {geminiService.isConfigured() ? 'AI is analyzing your images...' : 'Generating demo analysis...'}
+              <p className="text-gray-800 font-medium">
+                {aiService.isConfigured() ? 'AI is analyzing your images...' : 'Generating demo analysis...'}
               </p>
               <p className="text-sm text-gray-600 mt-2">Advanced computer vision in progress</p>
             </div>
@@ -448,7 +448,7 @@ const PhotoDiagnosis: React.FC = () => {
               {/* Anomaly Alert */}
               {diagnosis.findings && diagnosis.findings.length > 0 && (
                 <div className="bg-gradient-to-r from-red-100 to-orange-100 rounded-xl p-4 border-2 border-red-300">
-                  <div className="flex items-center mb-3">
+                  <div className="flex items-center mb-2">
                     <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
                     <h3 className="font-semibold text-gray-800">Visual Analysis Complete</h3>
                   </div>
