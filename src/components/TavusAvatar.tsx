@@ -236,9 +236,7 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
                   <span className="text-xs text-purple-400">ACTIVE</span>
                 </div>
               </>
-            )}
-          </div>
-        </div>
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-cyan-400/5 to-transparent opacity-50"></div>
 
         {/* Audio Visualization */}
         {isConnected && isListening && (
@@ -370,14 +368,10 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
                     animate={{ 
                       textShadow: [
                         "0 0 20px rgba(34, 211, 238, 0.8)",
-                        "0 0 40px rgba(34, 211, 238, 1)",
-                        "0 0 20px rgba(34, 211, 238, 0.8)"
-                      ]
-                    }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
+                        "0 0 30px rgba(34, 211, 238, 0.7)",
+                  <div className="text-6xl mb-4 filter drop-shadow-lg">
                     {doctor.icon}
-                  </motion.div>
+                  </div>
                   <p className="text-cyan-400 font-mono text-lg mb-2">Medical AI Avatar Online</p>
                   <div className="flex justify-center space-x-2">
                     <Activity className="h-4 w-4 text-yellow-400 animate-pulse" />
@@ -443,6 +437,10 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
               </motion.button>
               
               <motion.button
+                onClick={() => {
+                  if (window.confirm('Are you sure you want to end this conversation?')) {
+                    endConversation();
+                  }
                 onClick={() => {
                   if (window.confirm('Are you sure you want to end this conversation?')) {
                     endConversation();

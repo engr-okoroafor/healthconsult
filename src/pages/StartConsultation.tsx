@@ -23,8 +23,8 @@ import {
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { aiService } from '../services/aiService';
 import { tavusService } from '../services/tavusService';
+import { geminiService } from '../services/geminiService';
 import { geminiService } from '../services/geminiService';
 import TavusAvatar from '../components/TavusAvatar';
 import DoctorSelector from '../components/DoctorSelector';
@@ -218,14 +218,14 @@ const StartConsultation: React.FC = () => {
 
       const { error } = await supabase
         .from('consultations')
-        .insert({
+        .insert([{
           user_id: user?.id,
           doctor_id: doctor.id,
           doctor_type: doctor.specialty,
           symptoms: symptoms || 'General consultation',
           tavus_conversation_id: conversation.conversation_id,
           status: 'active',
-        });
+        }]);
 
       if (error) throw error;
 
