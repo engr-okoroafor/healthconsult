@@ -42,12 +42,6 @@ class TavusService {
 
   async startConsultation(replicaId: string, personaId: string): Promise<any> {
     try {
-      // Check if API key is configured
-      if (!this.isConfigured()) {
-        console.log('Tavus API not configured, simulating successful end conversation');
-        return { success: true };
-      }
-      
       const response = await fetch(`${this.baseURL}/conversations`, {
         method: 'POST',
         headers: {
@@ -123,14 +117,11 @@ class TavusService {
         throw new Error(`Tavus API error: ${response.statusText}`);
       }
 
-      // Handle empty response
-      const text = await response.text();
-      const data = text ? JSON.parse(text) : { success: true };
+      const data = await response.json();
       return data;
     } catch (error) {
       console.error('Tavus status check failed:', error);
-      // Return success anyway to prevent UI from getting stuck
-      return { success: true };
+      throw error;
     }
   }
 

@@ -488,49 +488,6 @@ const Settings: React.FC = () => {
                   <div className="space-y-3">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Gemini API Key
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={showApiKey ? 'text' : 'password'}
-                          placeholder="Enter your Gemini API key"
-                          defaultValue={localStorage.getItem('gemini_api_key') || ''}
-                          className="w-full p-3 pr-24 bg-white/70 border-2 border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-primary/30 focus:border-medical-primary transition-colors text-gray-800"
-                          onBlur={(e) => {
-                            if (e.target.value.trim()) {
-                              localStorage.setItem('gemini_api_key', e.target.value.trim());
-                              alert('Gemini API key saved successfully!');
-                            }
-                          }}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowApiKey(!showApiKey)}
-                          className="absolute right-12 top-1/2 transform -translate-y-1/2 text-medical-primary hover:text-medical-secondary"
-                        >
-                          {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            const input = e.currentTarget.previousElementSibling?.previousElementSibling as HTMLInputElement;
-                            if (input?.value.trim()) {
-                              localStorage.setItem('gemini_api_key', input.value.trim());
-                              alert('Gemini API key saved successfully!');
-                            }
-                          }}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs bg-medical-primary text-white px-2 py-1 rounded"
-                        >
-                          Save
-                        </button>
-                      </div>
-                      <p className="text-xs text-gray-600 mt-1">
-                        API key for Gemini AI analysis and content generation
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Tavus API Key
                       </label>
                       <div className="relative">

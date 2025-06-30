@@ -370,7 +370,7 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
                     animate={{ 
                       textShadow: [
                         "0 0 20px rgba(34, 211, 238, 0.8)",
-                        "0 0 30px rgba(34, 211, 238, 0.7)",
+                        "0 0 40px rgba(34, 211, 238, 1)",
                         "0 0 20px rgba(34, 211, 238, 0.8)"
                       ]
                     }}

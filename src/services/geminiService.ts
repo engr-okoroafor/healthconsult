@@ -149,39 +149,13 @@ Format as JSON:
 `;
       
       // For image analysis, we need to use a different endpoint that supports images
+      // This is a simplified version - in production, you'd need to handle image data properly
+      const response = await this.callGeminiAPI(prompt);
       try {
-        const response = await axios.post(
-          `${this.baseURL}/models/gemini-1.5-pro-vision:generateContent?key=${this.getApiKey()}`,
-          {
-            contents: [{
-              parts: [
-                { text: prompt },
-                { 
-                  inline_data: {
-                    mime_type: "image/jpeg",
-                    data: imageBase64
-                  }
-                }
-              ]
-            }]
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-        );
-        
-        const content = response.data.candidates[0].content.parts[0].text;
-        try {
-          return JSON.parse(content);
-        } catch (error) {
-          console.error('Failed to parse Gemini response as JSON:', error);
-          return this.parseImageAnalysisResponse(content, doctorSpecialty);
-        }
+        return JSON.parse(response);
       } catch (error) {
-        console.error('Gemini vision API call failed:', error);
-        return this.parseImageAnalysisResponse("Unable to analyze image with Gemini API", doctorSpecialty);
+        console.error('Failed to parse Gemini response as JSON:', error);
+        return this.parseImageAnalysisResponse(response, doctorSpecialty);
       }
     } catch (error) {
       console.error('Gemini image analysis failed:', error);
@@ -292,7 +266,68 @@ Format as JSON:
         "Take pain relievers at the first sign of symptoms rather than waiting until pain is severe for better effectiveness.",
         "Record medication times and symptom changes in a simple log to track effectiveness and identify patterns."
       ],
-      warning: "Seek immediate medical attention if you experience: fever above 103°F (39.4°C) that doesn't respond to medication, severe headache with stiff neck, difficulty breathing or shortness of breath, chest pain, severe abdominal pain, persistent vomiting, confusion or altered mental state, severe dizziness or fainting, unusual rash especially with fever, or if symptoms worsen significantly after 48-72 hours of home treatment. This information is not a substitute for professional medical advice, diagnosis, or treatment."
+      warning: "This is demo content. Seek immediate medical attention if you experience: fever above 103°F (39.4°C) that doesn't respond to medication, severe headache with stiff neck, difficulty breathing or shortness of breath, chest pain, severe abdominal pain, persistent vomiting, confusion or altered mental state, severe dizziness or fainting, unusual rash especially with fever, or if symptoms worsen significantly after 48-72 hours of home treatment. This information is not a substitute for professional medical advice, diagnosis, or treatment."
+    };
+  }
+
+  private parseTreatmentResponse(text: string): any {
+    return {
+      lifecyclePhases: {
+        phase1: "Immediate relief and symptom management (Days 1-3): Focus on reducing acute symptoms through targeted interventions. Apply cold compresses for 15-20 minutes every 2 hours to reduce inflammation. Take prescribed anti-inflammatory medications with food. Maintain complete rest with affected area elevated above heart level when possible. Limit movement to essential activities only.",
+        phase2: "Active treatment and healing phase (Days 4-7): Begin gentle mobilization while continuing pain management. Introduce progressive stretching exercises 3-4 times daily, holding each stretch for 30 seconds. Apply warm compresses for 15-20 minutes before exercises to improve circulation. Transition from complete rest to light activity with proper support/bracing.",
+        phase3: "Recovery and prevention phase (Week 2+): Implement comprehensive rehabilitation program with gradually increasing intensity. Perform strengthening exercises 3-5 times weekly, starting with 2 sets of 10 repetitions and progressing to 3 sets of 15. Incorporate balance and proprioception training daily. Establish maintenance routine to prevent recurrence."
+      },
+      naturalRemedies: [
+        "Complete rest and adequate sleep: 8-10 hours nightly plus 1-2 daytime naps (20-30 minutes) for first week, maintain consistent sleep schedule going to bed at same time daily, create optimal sleep environment with room temperature 65-68°F, complete darkness, and white noise if helpful.",
+        "Stress reduction techniques: Daily meditation (start with 5 minutes, increase to 20 minutes), progressive muscle relaxation before bed, deep breathing exercises (4-7-8 technique) performed 3-4 times daily, and weekly stress assessment using a 1-10 scale journal.",
+        "Natural anti-inflammatory protocol: Turmeric golden milk (1 tsp turmeric + 1/4 tsp black pepper + 1 cup warm milk) twice daily, fresh ginger tea (1-inch piece steeped 10 minutes) 3 times daily, and tart cherry juice (8 oz) before bedtime.",
+        "Gentle exercise progression: Week 1-2: 10-minute walks twice daily, Week 3-4: 20-minute walks plus gentle stretching, Week 5+: Add light resistance training and increase to 30-minute sessions 5 times weekly.",
+        "Comprehensive hydration therapy: 8-10 glasses pure water daily, electrolyte replacement with coconut water (1-2 cups), herbal teas (chamomile, peppermint) 2-3 cups daily, avoid caffeine and alcohol completely during healing phase.",
+        "Targeted herbal remedies: Echinacea tincture (1-2 ml three times daily) for immune support, elderberry syrup (1 tablespoon twice daily), and adaptogenic herbs like ashwagandha (300-600mg daily with meals) for stress management."
+      ],
+      foods: [
+        "Anti-inflammatory powerhouse foods: Fresh turmeric root (1-inch piece daily) or turmeric powder (1 tsp with black pepper), fresh ginger (1-2 inches daily), tart cherries (1 cup or 2 oz juice), and leafy greens (2-3 cups daily) divided between lunch and dinner meals.",
+        "Colorful fruits and vegetables: 5-7 servings daily including berries (1 cup blueberries/strawberries), citrus fruits (2 oranges or 1 grapefruit), cruciferous vegetables (1 cup broccoli/cauliflower), and orange vegetables (1 cup carrots/sweet potato).",
+        "High-quality lean proteins: Wild-caught fatty fish (salmon, sardines, mackerel) 3-4 times weekly (4-6 oz portions), organic poultry (4-6 oz portions), legumes (1/2 cup cooked beans/lentils daily), and plant proteins (quinoa, hemp seeds).",
+        "Nutrient-dense whole grains: Steel-cut oats (1/2 cup dry), quinoa (1/2 cup cooked), brown rice (1/3 cup cooked), and ancient grains like amaranth and millet - avoid refined grains completely during healing phase.",
+        "Therapeutic healthy fats: Extra virgin olive oil (2-3 tablespoons daily), avocado (1/2 medium daily), raw nuts and seeds (1 oz almonds, walnuts, pumpkin seeds), and coconut oil (1-2 tablespoons for cooking).",
+        "Healing beverages and hydration: 8-10 glasses filtered water, bone broth (1-2 cups daily), green tea (2-3 cups), herbal teas (chamomile, ginger, turmeric), and fresh vegetable juices (8 oz daily)."
+      ],
+      medications: [
+        "Over-the-counter pain relief: Acetaminophen 500-1000mg every 6-8 hours (maximum 3000mg daily) for pain and fever, or Ibuprofen 200-400mg every 6-8 hours with food (maximum 1200mg daily) for inflammation. Do not combine these medications without medical advice.",
+        "Anti-inflammatory medications: Naproxen 220mg twice daily with food for longer-lasting relief, or aspirin 325mg daily for cardiovascular protection (if no bleeding risk). Always take with food to prevent stomach irritation and at least 8 oz of water.",
+        "Topical treatments: Arnica gel or cream applied 3-4 times daily to affected areas (thin layer, massage gently until absorbed), capsaicin cream (0.025-0.075%) for nerve pain (wear gloves during application, wash hands thoroughly after), menthol-based rubs for muscle soreness.",
+        "Evidence-based supplements: Vitamin D3 (2000-4000 IU daily with fatty meal), Omega-3 fish oil (1-2g EPA/DHA daily with meals), Magnesium glycinate (200-400mg before bed), Vitamin C (500-1000mg divided into 2 doses), and Zinc (15-30mg daily with food)."
+      ],
+      exercises: [
+        "Comprehensive stretching routine: 15-20 minutes daily including neck rolls (5 in each direction), shoulder shrugs (10 repetitions, hold 3 seconds), spinal twists (hold 30 seconds each side), hip circles (10 in each direction), and calf stretches (hold 30 seconds each leg). Perform movements slowly with controlled breathing.",
+        "Progressive cardio program: Week 1-2: 10-15 minute walks at comfortable pace, Week 3-4: 20-25 minutes at moderate pace, Week 5+: 30-45 minutes or swimming/cycling for 20-30 minutes. Monitor heart rate staying in 50-70% max range (220 minus age).",
+        "Therapeutic breathing exercises: Diaphragmatic breathing (5 minutes 3x daily), box breathing (4-4-4-4 count for 5 minutes), alternate nostril breathing for stress relief (5 minutes before bed), and breath-holding exercises for lung capacity (inhale fully, hold 5 seconds, exhale slowly).",
+        "Range of motion therapy: Joint mobility exercises for all major joints, performed 2-3 times daily, including arm circles (10 in each direction), leg swings (10 each leg), ankle rotations (10 each direction), and gentle spinal movements in all directions.",
+        "Strength building progression: Start with bodyweight exercises (wall push-ups, chair squats, standing calf raises - 10 repetitions each), progress to resistance bands after 1 week (2 sets of 10), then light weights (1-5 lbs) after 2-3 weeks, focusing on proper form over intensity."
+      ],
+      dailySchedule: [
+        { time: "07:00", activity: "Wake up, drink 16 oz water with lemon, take morning supplements (Vitamin D3, Omega-3, Vitamin C)", type: "medication" },
+        { time: "08:00", activity: "Anti-inflammatory breakfast: oatmeal with berries, nuts, and turmeric golden milk (1 cup)", type: "nutrition" },
+        { time: "10:00", activity: "Gentle morning walk (15-20 minutes) and breathing exercises (5 minutes diaphragmatic breathing)", type: "exercise" },
+        { time: "12:00", activity: "Nutrient-dense lunch: salad with salmon, avocado, and olive oil dressing (4-6 oz protein, 2 cups vegetables)", type: "nutrition" },
+        { time: "15:00", activity: "Afternoon herbal tea (ginger or green tea, 1 cup) and meditation (10-15 minutes)", type: "wellness" },
+        { time: "18:00", activity: "Evening medication if needed, healing dinner with anti-inflammatory foods (4-6 oz protein, 2-3 cups vegetables, 1/2 cup whole grains)", type: "medication" },
+        { time: "20:00", activity: "Gentle stretching routine (15-20 minutes) and relaxation exercises (progressive muscle relaxation)", type: "exercise" },
+        { time: "21:00", activity: "Sleep preparation: chamomile tea (1 cup), gratitude journaling (5 minutes), room temperature adjustment to 65-68°F", type: "wellness" }
+      ],
+      preventionTips: [
+        "Maintain consistent healthy lifestyle habits: Establish daily routines including same wake/sleep times (7-9 hours nightly), regular meal schedules (eating every 3-4 hours), consistent exercise timing (same time daily), and weekly meal prep (Sunday for 3-4 days) to ensure nutritional consistency.",
+        "Comprehensive exercise routine: 150 minutes moderate-intensity cardio weekly (30 min x 5 days), 2-3 strength training sessions (focusing on major muscle groups, 8-12 repetitions, 2-3 sets), daily flexibility work (10-15 minutes), and weekly balance/coordination activities (tai chi, yoga).",
+        "Advanced stress management: Daily meditation practice (minimum 10 minutes, preferably morning), weekly stress assessment and adjustment (Sunday evening review), monthly stress management technique evaluation (try new methods), and quarterly lifestyle stress audit (identify and eliminate stressors).",
+        "Optimal sleep hygiene protocol: 7-9 hours nightly sleep, consistent bedtime routine starting 1 hour before sleep (dim lights, avoid screens, light reading), bedroom environment optimization (temperature 65-68°F, blackout curtains, white noise), and sleep quality tracking (journal or app)."
+      ],
+      possibleCauses: [
+        "Lifestyle factors and dietary choices: Poor nutrition (high processed foods, sugar, trans fats), sedentary lifestyle (sitting >6 hours daily), irregular sleep patterns (varying bedtimes, <7 hours nightly), chronic stress (work pressure, financial concerns), excessive alcohol consumption (>7 drinks weekly), smoking, and inadequate hydration (<64 oz water daily).",
+        "Environmental triggers and allergens: Air pollution exposure (urban environments, high traffic areas), household chemical irritants (cleaning products, air fresheners), seasonal allergens (pollen, mold spores), food sensitivities (gluten, dairy, eggs), electromagnetic field exposure, and workplace toxins (industrial chemicals, poor ventilation).",
+        "Genetic predisposition and family history: Inherited inflammatory conditions, autoimmune tendencies, metabolic disorders (diabetes, thyroid dysfunction), cardiovascular risk factors, and genetic variations affecting nutrient absorption and metabolism.",
+        "Previous injuries or underlying conditions: Past physical trauma (sports injuries, accidents), chronic infections (viral, bacterial), hormonal imbalances (cortisol, insulin, sex hormones), digestive disorders (IBS, SIBO, leaky gut), previous medication side effects, and accumulated oxidative stress damage."
+      ]
     };
   }
 
@@ -335,7 +370,7 @@ Format as JSON:
         "Bromelain enzyme supplement: 500mg three times daily between meals (not with food). Take at least 2 hours away from antibiotics if prescribed. Discontinue 2 weeks before any scheduled surgery due to blood-thinning effects.",
         "Magnesium glycinate: 200-400mg before bedtime to reduce muscle tension and improve sleep quality. Take with small amount of food to prevent digestive discomfort. Reduce dose if loose stools occur. Do not take with certain antibiotics or medications without consulting pharmacist."
       ],
-      warning: "Seek immediate medical attention if you experience: severe, uncontrolled pain that doesn't respond to over-the-counter medication; significant swelling, redness, warmth or streaking extending from the injury site; inability to bear weight or move the affected body part; numbness, tingling or discoloration (blue/white) in the extremity; fever above 101°F (38.3°C) developing after injury; signs of infection (increasing pain, pus, foul odor); or if you have underlying conditions like diabetes, immune disorders, or take blood thinners. This information is not a substitute for professional medical advice, diagnosis, or treatment."
+      warning: "This is demo content. Seek immediate medical attention if you experience: severe, uncontrolled pain that doesn't respond to over-the-counter medication; significant swelling, redness, warmth or streaking extending from the injury site; inability to bear weight or move the affected body part; numbness, tingling or discoloration (blue/white) in the extremity; fever above 101°F (38.3°C) developing after injury; signs of infection (increasing pain, pus, foul odor); or if you have underlying conditions like diabetes, immune disorders, or take blood thinners. This information is not a substitute for professional medical advice, diagnosis, or treatment."
     };
   }
 
