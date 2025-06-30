@@ -265,7 +265,7 @@ const StartConsultation: React.FC = () => {
         .from('consultations')
         .insert({
           user_id: user?.id,
-          doctor_id: selectedDoctor?.tavus_replica_id,
+          doctor_id: selectedDoctor?.id,
           doctor_type: selectedDoctor?.specialty || 'General Physician',
           symptoms: symptoms || 'General consultation',
           tavus_conversation_id: conversationId,
