@@ -119,8 +119,12 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
       if (status.thumbnail_video_url) {
         setAvatarUrl(status.thumbnail_video_url);
       }
+      // Clear any previous errors on successful load
+      setError(null);
     } catch (error) {
       console.error('Failed to load replica status:', error);
+      // Set error state to display to user instead of causing page refresh
+      setError('Unable to connect to medical AI service. Please check your connection and try again.');
     }
   };
 
