@@ -90,7 +90,7 @@ const SymptomChecker: React.FC = () => {
           
           setDiagnosis(mockDiagnosis);
           setIsAnalyzing(false);
-        }, 3000);
+        }, 1200);
         return;
       }
     } catch (error: any) {

@@ -226,7 +226,7 @@ const PhotoDiagnosis: React.FC = () => {
           
           setDiagnosis(mockDiagnosis);
           setIsAnalyzing(false);
-        }, 3000);
+        }, 1200);
       }
     } catch (error: any) {
       console.error('Analysis failed:', error);

@@ -29,7 +29,7 @@ class AIService {
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
+          model: 'gpt-4o',
           messages: [
             {
               role: 'system',
@@ -40,7 +40,7 @@ class AIService {
               content: prompt
             }
           ],
-          max_tokens: 2000,
+          max_tokens: 4000,
           temperature: 0.7
         })
       });
@@ -108,7 +108,7 @@ Format as JSON:
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
+          model: 'gpt-4o',
           messages: [
             {
               role: 'system',
@@ -130,7 +130,7 @@ Format as JSON:
               ]
             }
           ],
-          max_tokens: 2000,
+          max_tokens: 4000,
           temperature: 0.7
         })
       });
@@ -163,17 +163,17 @@ Affected body parts: ${bodyParts.join(', ')}
 Severity: ${severity}
 Duration: ${duration}
 
-Provide a detailed response with:
+Provide a detailed response with specific and practical examples:
 1. Most likely condition name
 2. Confidence percentage (0-100)
 3. Brief description of the condition
-4. 5 natural remedies with specific instructions (be very specific with dosages, frequency, and application methods)
-5. 5 healing foods and dietary recommendations (include specific foods, preparation methods, and consumption frequency)
-6. 3 recommended medications (over-the-counter) with specific brand names, dosages, and usage instructions
-7. 4 administration instructions (detailed steps for treatment application)
+4. 8 natural remedies with very specific instructions (include exact dosages, frequency, preparation methods, and application techniques)
+5. 8 healing foods and dietary recommendations (include specific foods with brand names where applicable, exact preparation methods, portion sizes, and consumption frequency)
+6. 5 recommended medications (over-the-counter) with specific brand names, exact dosages, timing, and detailed usage instructions
+7. 6 administration instructions (step-by-step detailed instructions for treatment application)
 8. Important warning signs to watch for
 
-Your response should be detailed and practical, with specific examples that a patient can immediately use.
+Your response should be extremely detailed and practical, with specific examples, brand names, exact measurements, and step-by-step instructions that a patient can immediately implement.
 
 Return your response in the following structure:
 condition: condition name
@@ -212,15 +212,15 @@ warning: warning text`;
     const prompt = `
 As a ${doctorSpecialty}, create a comprehensive treatment plan for: ${condition} (${severity} severity)
 
-Provide a detailed treatment plan with:
+Provide a detailed treatment plan with specific and practical examples:
 1. Lifecycle phases (3 phases with descriptions)
-2. 6 natural remedies with specific instructions
-3. 6 healing foods and dietary recommendations
-4. 4 recommended medications
-5. 5 recommended exercises
-6. Daily schedule with 4 time-based activities
-7. 4 prevention tips for future occurrences
-8. Possible causes (3-4 causes)
+2. 8 natural remedies with very specific instructions (include exact dosages, preparation methods, and application techniques)
+3. 8 healing foods and dietary recommendations (include specific foods with brand names, exact preparation methods, and portion sizes)
+4. 6 recommended medications with specific brand names and exact dosages
+5. 6 recommended exercises with detailed instructions
+6. Daily schedule with 6 time-based activities
+7. 6 prevention tips for future occurrences
+8. Possible causes (4-5 detailed causes)
 
 Format as JSON:
 {
@@ -262,12 +262,12 @@ Format as JSON:
     const prompt = `
 As a ${doctorSpecialty}, write a comprehensive health education article about: ${topic}
 
-Include:
+Include specific and practical examples:
 1. Detailed overview (2-3 paragraphs)
-2. 6 key points with actionable advice
-3. 5 natural treatments with specific instructions
+2. 8 key points with actionable advice and specific examples
+3. 8 natural treatments with very specific instructions (include exact dosages, preparation methods, and application techniques)
 4. Scientific evidence and recent research
-5. Prevention strategies
+5. 6 prevention strategies with specific implementation steps
 6. When to seek medical attention
 
 Format as JSON:
@@ -363,11 +363,14 @@ Format as JSON:
     if (remediesSection) {
       const remedies = remediesSection[1].split(',').map(item => item.trim()).filter(item => item);
       result.naturalRemedies = remedies.length > 0 ? remedies : [
-        "Drink ginger tea with honey 3 times daily (1 teaspoon grated ginger in hot water, steep 10 minutes, add 1 teaspoon honey)",
-        "Apply warm compress to affected area for 15-20 minutes, 3-4 times daily",
-        "Gargle with salt water (1/2 teaspoon salt in 8oz warm water) every 3 hours for sore throat",
-        "Take steam inhalation with 3-5 drops of eucalyptus oil for 10 minutes twice daily",
-        "Rest adequately with 7-8 hours of sleep in a slightly elevated position"
+        "Drink fresh ginger tea with Manuka honey: Use 1 tablespoon freshly grated ginger root in 8oz boiling water, steep for 15 minutes, strain, add 1 teaspoon Manuka honey (UMF 10+). Drink 3 times daily before meals",
+        "Apply warm compress using heating pad: Set to medium heat (104-108°F), place clean cloth barrier, apply to affected area for exactly 20 minutes, 4 times daily (morning, noon, evening, bedtime)",
+        "Gargle with Himalayan pink salt water: Mix 1/2 teaspoon fine Himalayan salt in 8oz warm filtered water (98-100°F), gargle for 30 seconds, repeat every 2 hours while awake",
+        "Steam inhalation with eucalyptus oil: Add 5 drops pure eucalyptus oil (Eucalyptus globulus) to 2 cups boiling water in ceramic bowl, cover head with towel, inhale for 10 minutes, twice daily",
+        "Turmeric golden milk: Mix 1 teaspoon organic turmeric powder + 1/4 teaspoon black pepper + 1 cup warm organic whole milk + 1 teaspoon coconut oil, drink 30 minutes before bed",
+        "Cold-pressed lemon water: Squeeze 1/2 fresh organic lemon into 16oz room temperature filtered water, add pinch of sea salt, drink first thing in morning on empty stomach",
+        "Echinacea tincture: Take 1ml (20 drops) of standardized Echinacea purpurea extract in 2oz water, 3 times daily for maximum 10 days",
+        "Apple cider vinegar rinse: Mix 1 tablespoon raw unfiltered ACV (Bragg's) with 8oz warm water, use as mouth rinse for 30 seconds, twice daily after brushing teeth"
       ];
     }
     
@@ -376,11 +379,14 @@ Format as JSON:
     if (foodsSection) {
       const foods = foodsSection[1].split(',').map(item => item.trim()).filter(item => item);
       result.foods = foods.length > 0 ? foods : [
-        "Chicken soup with garlic, onions, and ginger (1 bowl twice daily)",
-        "Fresh citrus fruits like oranges and lemons (2 servings daily for vitamin C)",
-        "Turmeric milk: 1 cup warm milk with 1/2 teaspoon turmeric and pinch of black pepper before bed",
-        "Leafy greens like spinach and kale in smoothies or lightly steamed (1 cup daily)",
-        "Probiotic-rich foods like yogurt with live cultures (1 small bowl daily)"
+        "Homemade bone broth soup: Simmer 2lbs grass-fed beef bones + 2 cloves minced garlic + 1 diced onion + 1 inch fresh ginger for 24 hours, strain, drink 1 cup warm every 4 hours",
+        "Organic citrus fruits: 1 large orange (Navel or Valencia) + 1/2 fresh lemon daily, eat orange segments with white pith, squeeze lemon in 8oz water",
+        "Wild-caught salmon: 4oz grilled Atlantic salmon with 1 tablespoon olive oil + lemon, 3 times per week for omega-3 fatty acids",
+        "Raw local honey: 1 tablespoon unprocessed local wildflower honey on empty stomach each morning, let dissolve slowly in mouth",
+        "Fermented vegetables: 2 tablespoons sauerkraut (Bubbies brand) or kimchi with each meal for probiotics and digestive enzymes",
+        "Organic blueberries: 1/2 cup fresh or frozen wild blueberries daily, blend in smoothie or eat with Greek yogurt for antioxidants",
+        "Free-range chicken: 4oz organic chicken breast, slow-cooked with herbs, 4 times per week for high-quality protein and B vitamins",
+        "Dark leafy greens smoothie: Blend 2 cups organic spinach + 1 cup kale + 1 banana + 1 cup coconut water, drink 16oz daily on empty stomach"
       ];
     }
     
@@ -389,9 +395,11 @@ Format as JSON:
     if (medicationsSection) {
       const medications = medicationsSection[1].split(',').map(item => item.trim()).filter(item => item);
       result.medications = medications.length > 0 ? medications : [
-        "Paracetamol (Tylenol) 500mg tablets: Take 1-2 tablets every 6 hours as needed, not exceeding 8 tablets in 24 hours",
-        "Ibuprofen (Advil) 200mg: Take 1-2 tablets every 8 hours with food, not exceeding 6 tablets in 24 hours",
-        "Loratadine (Claritin) 10mg: Take 1 tablet daily for allergic symptoms"
+        "Acetaminophen (Tylenol Extra Strength) 500mg tablets: Take 2 tablets every 6 hours with 8oz water, maximum 8 tablets in 24 hours, take with food to prevent stomach upset",
+        "Ibuprofen (Advil Liqui-Gels) 200mg: Take 2 capsules every 8 hours with full meal and 8oz water, maximum 6 capsules in 24 hours, avoid if stomach ulcers",
+        "Loratadine (Claritin 24-Hour) 10mg tablets: Take 1 tablet daily at same time with water, preferably in morning, can take with or without food",
+        "Guaifenesin (Mucinex) 600mg extended-release: Take 1 tablet every 12 hours with 8oz water, drink extra fluids throughout day",
+        "Zinc lozenges (Cold-Eeze) 13.3mg: Dissolve 1 lozenge in mouth every 2 hours while awake, maximum 6 per day, take on empty stomach"
       ];
     }
     
@@ -400,10 +408,12 @@ Format as JSON:
     if (administrationSection) {
       const administration = administrationSection[1].split(',').map(item => item.trim()).filter(item => item);
       result.administration = administration.length > 0 ? administration : [
-        "Take all medications with a full glass of water and after meals to prevent stomach irritation",
-        "Apply compresses for the recommended duration and frequency, ensuring the temperature is comfortable",
-        "Stay well-hydrated by drinking at least 8-10 glasses of water throughout the day",
-        "Monitor your symptoms daily and keep track of any changes or improvements"
+        "Take all medications with exactly 8oz (1 full glass) of room temperature water, 30 minutes after eating to prevent stomach irritation and ensure proper absorption",
+        "Apply warm compresses at 104-108°F for exactly 20 minutes using timer, check skin every 5 minutes to prevent burns, use clean cloth barrier between skin and heat source",
+        "Drink 10-12 glasses (80-96oz) of filtered water daily, sip slowly throughout day, increase to 12-14 glasses if fever present, track intake with marked water bottle",
+        "Monitor symptoms twice daily (morning and evening), record temperature, pain level (1-10 scale), and energy level in smartphone app or journal",
+        "Take natural remedies 30 minutes before or 2 hours after medications to prevent interactions, set phone alarms for consistent timing",
+        "Rest in slightly elevated position (30-45 degrees) using 2-3 pillows, maintain room temperature at 68-70°F, ensure 7-9 hours sleep nightly"
       ];
     }
     
@@ -412,7 +422,7 @@ Format as JSON:
     if (warningMatch) {
       result.warning = warningMatch[1].trim();
     } else {
-      result.warning = "Seek immediate medical attention if symptoms worsen, if you develop high fever, severe pain, difficulty breathing, or if symptoms persist beyond 3-5 days. This AI-generated advice is not a substitute for professional medical care.";
+      result.warning = "Seek immediate medical attention if you develop: fever above 102°F (38.9°C), severe pain rated 8+ on 10-point scale, difficulty breathing or shortness of breath, persistent vomiting for more than 24 hours, signs of dehydration (dark urine, dizziness), or if symptoms worsen after 48 hours of treatment. This AI-generated advice is not a substitute for professional medical care and should not replace consultation with a qualified healthcare provider.";
     }
     
     return result;
@@ -424,31 +434,41 @@ Format as JSON:
       confidence: 75,
       description: text.substring(0, 200) + "...",
       naturalRemedies: [
-        "Rest and adequate sleep (8-9 hours nightly in a dark, quiet room)",
-        "Stay hydrated with water (at least 8-10 glasses daily, more if feverish)",
-        "Apply warm compress to affected areas (15 minutes, 3-4 times daily)",
-        "Practice deep breathing exercises (5 minutes, 3 times daily)",
-        "Drink ginger and honey tea (1 teaspoon each in hot water, 3 times daily)"
+        "Complete bed rest: Sleep 8-9 hours nightly in completely dark room (blackout curtains), maintain 65-68°F temperature, use white noise machine, elevate head 30 degrees with memory foam pillow",
+        "Hydration protocol: Drink 12-14 glasses (96-112oz) filtered water daily, add 1/4 teaspoon Himalayan salt per 32oz, sip 4oz every 30 minutes while awake",
+        "Therapeutic heat therapy: Apply heating pad set to medium (104°F) with timer for exactly 20 minutes, 4 times daily, use moisture barrier cloth to prevent burns",
+        "Structured breathing exercises: Practice 4-7-8 technique (inhale 4 counts, hold 7, exhale 8) for 5 minutes, 3 times daily using meditation app timer",
+        "Fresh ginger honey tea: Grate 1 tablespoon fresh organic ginger root, steep in 8oz boiling water for 15 minutes, strain, add 1 teaspoon raw Manuka honey (UMF 15+)",
+        "Cold therapy alternation: Apply ice pack wrapped in thin towel for 15 minutes, then remove for 15 minutes, repeat 3 cycles, twice daily",
+        "Epsom salt bath: Dissolve 2 cups pharmaceutical-grade Epsom salt in warm bath (98-100°F), soak for 20 minutes before bedtime",
+        "Essential oil aromatherapy: Diffuse 5 drops lavender + 3 drops eucalyptus oil in bedroom for 30 minutes before sleep using ultrasonic diffuser"
       ],
       foods: [
-        "Fresh citrus fruits (oranges, lemons) - 2 servings daily for vitamin C",
-        "Bone broth soup with vegetables (1 bowl twice daily)",
-        "Leafy greens like spinach and kale (1 cup daily, lightly steamed)",
-        "Anti-inflammatory foods like turmeric and ginger (add 1 teaspoon to meals)",
-        "Probiotic-rich yogurt with live cultures (1 small bowl daily)"
+        "Organic citrus protocol: 2 large navel oranges + 1 whole lemon daily, eat orange with white pith, drink lemon in 16oz warm water on empty stomach",
+        "Healing bone broth: Simmer 3lbs grass-fed beef bones + organic vegetables for 24 hours, strain, drink 8oz warm every 3 hours, store in glass containers",
+        "Nutrient-dense greens: 2 cups raw organic spinach + 1 cup massaged kale with 1 tablespoon olive oil and lemon juice, consume within 30 minutes of preparation",
+        "Golden turmeric paste: Mix 1 teaspoon organic turmeric + 1/4 teaspoon black pepper + 1 tablespoon coconut oil, take with warm milk before bed",
+        "Probiotic powerhouse: 6oz plain Greek yogurt (Fage Total) with 50+ billion CFU, add 1 tablespoon raw honey and 1/4 cup blueberries",
+        "Wild-caught salmon: 4oz Atlantic salmon with skin, baked at 400°F for 12 minutes with herbs, 3 times weekly for omega-3 fatty acids",
+        "Fermented vegetables: 2 tablespoons raw sauerkraut (Bubbies brand) or kimchi with each meal for digestive enzymes and probiotics",
+        "Antioxidant smoothie: Blend 1 cup frozen wild blueberries + 1 banana + 1 cup coconut milk + 1 tablespoon almond butter, drink immediately"
       ],
       medications: [
-        "Paracetamol (Tylenol) 500mg: 1-2 tablets every 6 hours as needed, maximum 8 tablets daily",
-        "Ibuprofen (Advil) 200mg: 1-2 tablets every 8 hours with food if pain persists",
-        "Loratadine (Claritin) 10mg: 1 tablet daily if allergic symptoms are present"
+        "Acetaminophen (Tylenol Extra Strength) 500mg caplets: Take 2 caplets every 6 hours with 8oz water and food, maximum 8 caplets in 24 hours, set phone alarm for timing",
+        "Ibuprofen (Advil Liqui-Gels) 200mg: Take 2 capsules every 8 hours with full meal and 8oz water, maximum 6 capsules daily, avoid if stomach issues",
+        "Loratadine (Claritin 24-Hour) 10mg tablets: Take 1 tablet daily at same time (preferably morning) with water, can take with or without food",
+        "Guaifenesin (Mucinex Extended-Release) 600mg: Take 1 tablet every 12 hours with 8oz water, drink additional fluids throughout day",
+        "Zinc gluconate lozenges (Cold-Eeze) 13.3mg: Dissolve 1 lozenge slowly in mouth every 2 hours while awake, maximum 6 daily, take between meals"
       ],
       administration: [
-        "Take all medications with a full glass of water and after meals to prevent stomach irritation",
-        "Apply compresses at the recommended temperature for 15-20 minutes at a time",
-        "Increase fluid intake to at least 2-3 liters daily while symptoms persist",
-        "Monitor temperature twice daily and keep a symptom journal to track progress"
+        "Medication timing protocol: Take all medications with exactly 8oz room temperature water, 30-45 minutes after eating, use smartphone app to track doses and set reminders",
+        "Temperature-controlled compress application: Use digital thermometer to verify 104-108°F, apply for exactly 20 minutes using timer, check skin every 5 minutes",
+        "Structured hydration schedule: Drink 4oz filtered water every 30 minutes while awake, track intake with marked 32oz bottle, increase by 50% if fever present",
+        "Comprehensive symptom monitoring: Record temperature, pain level (1-10), energy level, and appetite twice daily in health app, take photos of affected areas",
+        "Supplement timing coordination: Take natural remedies 30 minutes before or 2 hours after medications, maintain 4-hour gap between different supplements",
+        "Sleep optimization routine: Maintain bedroom at 65-68°F, use blackout curtains, elevate head 30-45 degrees, practice 4-7-8 breathing before sleep"
       ],
-      warning: "Seek immediate medical attention if you develop high fever (above 102°F/39°C), severe pain, difficulty breathing, persistent vomiting, or if symptoms worsen after 48 hours of home treatment. This AI-generated advice is not a substitute for professional medical care."
+      warning: "Seek immediate emergency medical attention if you experience: fever above 103°F (39.4°C), severe pain rated 8+ on 10-point scale, difficulty breathing or chest tightness, persistent vomiting for more than 24 hours, signs of severe dehydration (dark urine, dizziness, rapid heartbeat), severe headache with neck stiffness, or if symptoms significantly worsen after 48 hours of treatment. Call 911 for breathing difficulties or chest pain. This AI-generated advice is not a substitute for professional medical care and should not replace consultation with a qualified healthcare provider."
     };
   }
 

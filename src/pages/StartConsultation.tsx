@@ -170,7 +170,7 @@ const StartConsultation: React.FC = () => {
             warning: 'This is demo content. Seek medical attention if symptoms worsen.'
           });
           setIsAnalyzing(false);
-        }, 2000);
+        }, 1000);
         return;
       }
     } catch (error: any) {

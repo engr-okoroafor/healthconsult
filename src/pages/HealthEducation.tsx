@@ -196,7 +196,7 @@ const HealthEducation: React.FC = () => {
             seekHelp: "Seek immediate medical attention if symptoms are severe, persistent, or worsening. Always consult with healthcare professionals before making significant changes to your health regimen, especially if you have existing medical conditions or take medications."
           });
           setIsGenerating(false);
-        }, 2500);
+        }, 1200);
         return;
       }
     } catch (error: any) {
