@@ -13,7 +13,8 @@ import {
   Thermometer,
   Shield,
   Stethoscope,
-  ShoppingCart
+  ShoppingCart,
+  Heart
 } from 'lucide-react';
 import BoltBadge from '../components/BoltBadge';
 import PurchaseModal from '../components/PurchaseModal';
