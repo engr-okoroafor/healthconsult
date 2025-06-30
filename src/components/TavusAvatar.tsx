@@ -40,6 +40,7 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isListening, setIsListening] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -113,6 +114,8 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
   const loadReplicaStatus = async () => {
     if (!doctor) return;
     
+    // Set loading state to prevent multiple requests
+    setIsLoading(true);
     try {
       const status = await tavusService.getReplicaStatus(doctor.tavus_replica_id);
       setReplicaStatus(status);
@@ -125,12 +128,15 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
       console.error('Failed to load replica status:', error);
       // Set error state to display to user instead of causing page refresh
       setError('Unable to connect to medical AI service. Please check your connection and try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const startConversation = async () => {
     if (!tavusService.isConfigured()) {
       setError('Tavus API key not configured. Please check your settings.');
+      // Return early to prevent further execution
       return;
     }
 
@@ -138,6 +144,13 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
     setError(null);
 
     try {
+      const replicaData = await tavusService.getReplicaStatus(doctor.tavus_replica_id);
+
+      if (replicaData && replicaData.status !== 'completed') {
+        toast.error(`Replica not ready: ${replicaData.status}`);
+        return;
+      }
+
       const conversation = await tavusService.startConsultation(
         doctor.tavus_replica_id,
         doctor.tavus_persona_id
