@@ -109,13 +109,13 @@ const PhotoDiagnosis: React.FC = () => {
   const handleConversationStart = async (conversationId: string) => {
     setActiveConversationId(conversationId);
     
-    // Save consultation to database - using doctor.id (UUID) instead of tavus_replica_id
+    // Save consultation to database
     try {
       const { error } = await supabase
         .from('consultations')
         .insert({
           user_id: user?.id,
-          doctor_id: selectedDoctor?.id, // Use the UUID from the database
+          doctor_id: selectedDoctor?.tavus_replica_id,
           doctor_type: selectedDoctor?.specialty || 'Radiologist',
           symptoms: `Image analysis consultation for ${selectedBodyPart || 'unknown body part'}`,
           tavus_conversation_id: conversationId,

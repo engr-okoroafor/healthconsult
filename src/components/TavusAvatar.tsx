@@ -194,8 +194,8 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
           backgroundImage: `
-            linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px)
+            linear-gradient(rgba(34, 211, 238, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(34, 211, 238, 0.1) 1px, transparent 1px)
           `,
           backgroundSize: '20px 20px'
         }}></div>
@@ -266,6 +266,11 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
         {/* Holographic Scan Lines */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/5 to-transparent animate-pulse"></div>
+          <motion.div
+            className="absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
+            animate={{ y: [0, 400, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          />
         </div>
 
         {!isConnected && !isConnecting && (
@@ -355,19 +360,14 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
         {isConnected && (
           <>
             {avatarUrl ? (
-              <div className="relative w-full h-full">
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-900/30 to-blue-900/20 mix-blend-overlay pointer-events-none"></div>
-                <video
-                  ref={videoRef}
-                  src={avatarUrl}
-                  className="w-full h-full object-cover"
-                  autoPlay
-                  muted={isMuted}
-                  style={{ display: isVideoEnabled ? 'block' : 'none' }}
-                />
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent"></div>
-                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent"></div>
-              </div>
+              <video
+                ref={videoRef}
+                src={avatarUrl}
+                className="w-full h-full object-cover"
+                autoPlay
+                muted={isMuted}
+                style={{ display: isVideoEnabled ? 'block' : 'none' }}
+              />
             ) : (
               <div className="w-full h-full flex items-center justify-center relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 via-transparent to-blue-400/10 animate-pulse"></div>
@@ -412,13 +412,13 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
             {/* Medical HUD Overlay */}
             <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none">
               <div className="bg-slate-900/80 backdrop-blur-sm border border-cyan-400/30 rounded-lg p-3">
-                <div className="flex items-center space-x-2 text-xs font-mono text-cyan-400">
+                <div className="flex items-center space-x-2 text-xs text-cyan-400">
                   <Activity className="h-3 w-3" />
                   <span>VITAL SIGNS MONITORING</span>
                 </div>
               </div>
               <div className="bg-slate-900/80 backdrop-blur-sm border border-green-400/30 rounded-lg p-3">
-                <div className="flex items-center space-x-2 text-xs font-mono text-green-400">
+                <div className="flex items-center space-x-2 text-xs text-green-400">
                   <Brain className="h-3 w-3" />
                   <span>AI ANALYSIS ACTIVE</span>
                 </div>
@@ -428,27 +428,27 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
             {/* Enhanced Controls */}
             <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center space-x-4">
               <motion.button
-                onClick={() => setIsMuted(!isMuted)} 
-                className={`p-4 rounded-full transition-all duration-300 backdrop-blur-sm border-2 ${
-                  isMuted
-                    ? 'bg-red-500/70 border-red-400/80 hover:bg-red-400/70'
-                    : 'bg-slate-800/70 border-cyan-400/70 hover:bg-slate-700/70'
-                } text-white shadow-lg shadow-cyan-500/20`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsMuted(!isMuted)}
+                className={`p-4 rounded-full transition-all duration-300 backdrop-blur-sm border ${
+                  isMuted 
+                    ? 'bg-red-500/80 border-red-400 hover:bg-red-400/80' 
+                    : 'bg-slate-800/80 border-cyan-400/50 hover:bg-slate-700/80'
+                } text-white shadow-lg`}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
                 {isMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
               </motion.button>
               
               <motion.button
                 onClick={() => setIsVideoEnabled(!isVideoEnabled)}
-                className={`p-4 rounded-full transition-all duration-300 backdrop-blur-sm border-2 ${
+                className={`p-4 rounded-full transition-all duration-300 backdrop-blur-sm border ${
                   !isVideoEnabled 
-                    ? 'bg-red-500/70 border-red-400/80 hover:bg-red-400/70' 
-                    : 'bg-slate-800/70 border-cyan-400/70 hover:bg-slate-700/70'
-                } text-white shadow-lg shadow-cyan-500/20`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                    ? 'bg-red-500/80 border-red-400 hover:bg-red-400/80' 
+                    : 'bg-slate-800/80 border-cyan-400/50 hover:bg-slate-700/80'
+                } text-white shadow-lg`}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
                 {isVideoEnabled ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
               </motion.button>
@@ -456,9 +456,9 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
               <motion.button
                 onClick={endConversation}
                 disabled={isConnecting}
-                className="p-4 rounded-full bg-red-500/70 hover:bg-red-400/70 border-2 border-red-400/80 text-white transition-all duration-300 backdrop-blur-sm shadow-lg shadow-red-500/20"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                className="p-4 rounded-full bg-red-500/80 hover:bg-red-400/80 border border-red-400 text-white transition-all duration-300 backdrop-blur-sm shadow-lg"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
                 <PhoneOff className="h-5 w-5" />
               </motion.button>
