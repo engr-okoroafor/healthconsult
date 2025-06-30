@@ -198,7 +198,7 @@ const PhotoDiagnosis: React.FC = () => {
             findings: [
               {
                 type: 'Visual Analysis (Demo)',
-                description: 'Demo analysis - Configure OpenAI API key in environment variables for real AI-powered image analysis.',
+                description: 'Demo analysis - Configure OpenAI API key in environment variables for real AI-powered image analysis. Visual examination reveals characteristic inflammatory changes consistent with contact dermatitis, including erythema (redness), mild edema (swelling), and possible vesicle formation in the affected area.',
                 severity: 'mild',
                 confidence: 0.78
               }
@@ -206,22 +206,33 @@ const PhotoDiagnosis: React.FC = () => {
             diagnosis: {
               condition: 'Contact Dermatitis (Demo)',
               confidence: 0.78,
-              description: 'Demo analysis - Configure OpenAI API key for real AI analysis.'
+              description: 'Demo analysis - Configure OpenAI API key for real AI analysis. Contact dermatitis is an inflammatory skin condition caused by direct contact with irritants or allergens. The condition typically presents with localized redness, swelling, and possible blistering in the area of contact. This appears to be acute contact dermatitis based on the visual presentation and symptom pattern.'
             },
             naturalRemedies: [
-              'Apply cool, wet compresses for 15-20 minutes several times daily',
-              'Use aloe vera gel (pure, without additives) 3-4 times daily',
-              'Take oatmeal baths - blend oats and add to lukewarm bath water'
+              'Apply cool, wet compresses using clean cloth soaked in cold water for 15-20 minutes, 4-6 times daily to reduce inflammation and provide immediate relief from itching and burning',
+              'Use 100% pure aloe vera gel (refrigerated for extra cooling effect) applied in thin layer 4-5 times daily - ensure no added fragrances or alcohol which can worsen irritation',
+              'Take colloidal oatmeal baths: blend 1 cup plain oats into fine powder, add to lukewarm bath water, soak for 15-20 minutes twice daily for anti-inflammatory and moisturizing effects',
+              'Apply cold milk compresses: soak clean cloth in cold whole milk for 10-15 minutes, 3 times daily - the proteins and fats help soothe and heal irritated skin',
+              'Use calendula cream or ointment (2-3% concentration) applied 3-4 times daily for its anti-inflammatory and wound-healing properties',
+              'Apply witch hazel extract with cotton pad 2-3 times daily for its astringent and anti-inflammatory effects'
             ],
             foods: [
-              'Anti-inflammatory foods: turmeric, ginger, leafy greens',
-              'Omega-3 rich foods: walnuts, flaxseeds, chia seeds'
+              'Anti-inflammatory foods: 1 teaspoon turmeric powder daily (mixed in warm milk or food), fresh ginger (1-inch piece daily in tea or food), 2-3 servings of dark leafy greens (spinach, kale) for antioxidants and vitamins',
+              'Omega-3 rich foods: 1 handful of walnuts daily, 2 tablespoons ground flaxseeds in smoothies or yogurt, 1 tablespoon chia seeds soaked in water for 15 minutes before consuming',
+              'Vitamin C rich foods: 2-3 citrus fruits daily, 1 cup fresh berries, 1 bell pepper for collagen synthesis and skin healing',
+              'Zinc-rich foods: 1 oz pumpkin seeds, 3 oz lean meat or fish, 1/2 cup legumes daily for wound healing and immune support',
+              'Quercetin-rich foods: 1 medium apple with skin, 1/2 cup red onions, 1 cup green tea daily for natural antihistamine effects',
+              'Probiotic foods: 1 cup plain yogurt or kefir daily to support immune system and reduce inflammatory response'
             ],
             medications: [
-              'Antihistamine (Benadryl) 25mg every 6 hours for itching',
-              'Hydrocortisone cream 1% - apply thin layer twice daily'
+              'Oral antihistamine (Benadryl/Diphenhydramine): 25-50mg every 6-8 hours for adults (maximum 300mg per day) to reduce itching and allergic response - may cause drowsiness, avoid driving',
+              'Loratadine (Claritin): 10mg once daily for non-drowsy antihistamine effect - preferred for daytime use',
+              'Hydrocortisone cream 1%: Apply thin layer to affected area twice daily for maximum 7 days - do not use on broken skin or face without medical supervision',
+              'Calamine lotion: Apply 3-4 times daily for drying effect and itch relief - shake well before use, allow to dry completely',
+              'Topical anesthetic (lidocaine 2%): Apply sparingly 2-3 times daily for severe itching - test small area first for sensitivity',
+              'Oral pain reliever (Ibuprofen): 200-400mg every 6-8 hours with food for inflammation and pain relief'
             ],
-            warning: 'This is demo content. Configure OpenAI API key for real AI analysis.'
+            warning: 'This is demo content. Configure OpenAI API key for real AI analysis. Seek immediate medical attention if you experience: signs of infection (pus, red streaking, fever), severe swelling or difficulty breathing (possible allergic reaction), blistering covering large areas, no improvement after 7 days of treatment, or if condition spreads rapidly. Avoid scratching to prevent secondary bacterial infection.'
           };
           
           setDiagnosis(mockDiagnosis);

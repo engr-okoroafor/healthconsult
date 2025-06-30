@@ -266,11 +266,6 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
         {/* Holographic Scan Lines */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/5 to-transparent animate-pulse"></div>
-          <motion.div
-            className="absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
-            animate={{ y: [0, 400, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          />
         </div>
 
         {!isConnected && !isConnecting && (

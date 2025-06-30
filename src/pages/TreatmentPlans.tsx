@@ -132,56 +132,60 @@ const TreatmentPlans: React.FC = () => {
         setTimeout(() => {
           setGeneratedPlan({
             lifecyclePhases: {
-              phase1: "Immediate relief and symptom management (Days 1-3)",
-              phase2: "Active treatment and healing phase (Days 4-7)",
-              phase3: "Recovery and prevention phase (Week 2+)"
+              phase1: "Immediate relief and symptom management (Days 1-3): Focus on reducing acute symptoms, providing comfort measures, and stabilizing the condition. Implement emergency protocols, pain management, and basic supportive care.",
+              phase2: "Active treatment and healing phase (Days 4-7): Begin targeted therapeutic interventions, monitor progress closely, and adjust treatments based on response. Introduce healing foods, specific medications, and therapeutic activities.",
+              phase3: "Recovery and prevention phase (Week 2+): Transition to long-term management strategies, implement prevention protocols, and establish sustainable health maintenance routines for optimal long-term outcomes."
             },
             naturalRemedies: [
-              "Rest and adequate sleep (8+ hours)",
-              "Stress reduction techniques and meditation",
-              "Natural anti-inflammatory foods and herbs",
-              "Gentle exercise as tolerated",
-              "Hydration therapy with electrolytes",
-              "Herbal remedies specific to condition"
+              "Complete rest and adequate sleep: 8-10 hours nightly plus 1-2 daytime naps (20-30 minutes) for first week, maintain consistent sleep schedule going to bed at same time daily, create optimal sleep environment with room temperature 65-68°F",
+              "Stress reduction techniques: Daily meditation (start with 5 minutes, increase to 20 minutes), progressive muscle relaxation before bed, deep breathing exercises (4-7-8 technique) performed 3-4 times daily, and weekly stress assessment",
+              "Natural anti-inflammatory protocol: Turmeric golden milk (1 tsp turmeric + 1 cup warm milk + pinch black pepper) twice daily, fresh ginger tea (1-inch piece steeped 10 minutes) 3 times daily, and omega-3 rich foods",
+              "Gentle exercise progression: Week 1-2: 10-minute walks twice daily, Week 3-4: 20-minute walks plus gentle stretching, Week 5+: Add light resistance training and increase to 30-minute sessions",
+              "Comprehensive hydration therapy: 8-10 glasses pure water daily, electrolyte replacement with coconut water (1-2 cups), herbal teas (chamomile, peppermint) 2-3 cups daily, avoid caffeine and alcohol",
+              "Targeted herbal remedies: Echinacea tincture (1-2 ml three times daily) for immune support, elderberry syrup (1 tablespoon twice daily), and adaptogenic herbs like ashwagandha (300-600mg daily with meals)"
             ],
             foods: [
-              "Anti-inflammatory foods (turmeric, ginger)",
-              "Fresh fruits and vegetables (5+ servings daily)",
-              "Lean proteins (fish, legumes, poultry)",
-              "Whole grains and complex carbohydrates",
-              "Healthy fats (avocado, nuts, olive oil)",
-              "Adequate hydration (8-10 glasses water)"
+              "Anti-inflammatory powerhouse foods: Fresh turmeric root (1-inch piece daily) or turmeric powder (1 tsp with black pepper), fresh ginger (1-2 inches daily), tart cherries (1 cup or 2 oz juice), and leafy greens (2-3 cups daily)",
+              "Colorful fruits and vegetables: 5-7 servings daily including berries (1 cup blueberries/strawberries), citrus fruits (2 oranges or 1 grapefruit), cruciferous vegetables (1 cup broccoli/cauliflower), and orange vegetables (1 cup carrots/sweet potato)",
+              "High-quality lean proteins: Wild-caught fatty fish (salmon, sardines, mackerel) 3-4 times weekly, organic poultry (4-6 oz portions), legumes (1/2 cup cooked beans/lentils daily), and plant proteins (quinoa, hemp seeds)",
+              "Nutrient-dense whole grains: Steel-cut oats (1/2 cup dry), quinoa (1/2 cup cooked), brown rice (1/3 cup cooked), and ancient grains like amaranth and millet - avoid refined grains completely",
+              "Therapeutic healthy fats: Extra virgin olive oil (2-3 tablespoons daily), avocado (1/2 medium daily), raw nuts and seeds (1 oz almonds, walnuts, pumpkin seeds), and coconut oil (1-2 tablespoons for cooking)",
+              "Healing beverages and hydration: 8-10 glasses filtered water, bone broth (1-2 cups daily), green tea (2-3 cups), herbal teas (chamomile, ginger, turmeric), and fresh vegetable juices (8 oz daily)"
             ],
             medications: [
-              "Over-the-counter pain relief as needed",
-              "Anti-inflammatory medications if required",
-              "Topical treatments for localized symptoms",
-              "Supplements as recommended by healthcare provider"
+              "Over-the-counter pain relief: Acetaminophen 500-1000mg every 6-8 hours (maximum 3000mg daily) for pain and fever, or Ibuprofen 200-400mg every 6-8 hours with food (maximum 1200mg daily) for inflammation",
+              "Anti-inflammatory medications: Naproxen 220mg twice daily with food for longer-lasting relief, or aspirin 325mg daily for cardiovascular protection (if no bleeding risk), always take with food to prevent stomach irritation",
+              "Topical treatments: Arnica gel or cream applied 3-4 times daily to affected areas, capsaicin cream (0.025-0.075%) for nerve pain, menthol-based rubs for muscle soreness, and cold/heat therapy alternating 15 minutes each",
+              "Evidence-based supplements: Vitamin D3 (2000-4000 IU daily), Omega-3 fish oil (1-2g EPA/DHA daily), Magnesium glycinate (200-400mg before bed), Vitamin C (500-1000mg daily), and Zinc (15-30mg daily with food)"
             ],
             exercises: [
-              "Gentle stretching and flexibility exercises",
-              "Light walking or low-impact cardio",
-              "Breathing exercises and relaxation techniques",
-              "Range of motion activities",
-              "Gradual increase in activity level"
+              "Comprehensive stretching routine: 15-20 minutes daily including neck rolls, shoulder shrugs, spinal twists, hip circles, and calf stretches - hold each stretch 30 seconds, repeat 2-3 times",
+              "Progressive cardio program: Week 1-2: 10-15 minute walks, Week 3-4: 20-25 minutes, Week 5+: 30-45 minutes or swimming/cycling for 20-30 minutes, monitor heart rate staying in 50-70% max range",
+              "Therapeutic breathing exercises: Diaphragmatic breathing (5 minutes 3x daily), box breathing (4-4-4-4 count), alternate nostril breathing for stress relief, and breath-holding exercises for lung capacity",
+              "Range of motion therapy: Joint mobility exercises for all major joints, performed 2-3 times daily, including arm circles, leg swings, ankle rotations, and gentle spinal movements in all directions",
+              "Strength building progression: Start with bodyweight exercises (wall push-ups, chair squats), progress to resistance bands, then light weights (1-5 lbs), focusing on proper form over intensity"
             ],
             dailySchedule: [
-              { time: "08:00", activity: "Morning medication and healthy breakfast", type: "medication" },
-              { time: "12:00", activity: "Nutritious lunch and light exercise", type: "nutrition" },
-              { time: "18:00", activity: "Evening medication and dinner", type: "medication" },
-              { time: "21:00", activity: "Relaxation routine and sleep preparation", type: "wellness" }
+              { time: "07:00", activity: "Wake up, drink 16 oz water with lemon, take morning supplements (Vitamin D, Omega-3)", type: "medication" },
+              { time: "08:00", activity: "Anti-inflammatory breakfast: oatmeal with berries, nuts, and turmeric golden milk", type: "nutrition" },
+              { time: "10:00", activity: "Gentle morning walk (15-20 minutes) and breathing exercises", type: "exercise" },
+              { time: "12:00", activity: "Nutrient-dense lunch: salad with salmon, avocado, and olive oil dressing", type: "nutrition" },
+              { time: "15:00", activity: "Afternoon herbal tea (ginger or green tea) and meditation (10-15 minutes)", type: "wellness" },
+              { time: "18:00", activity: "Evening medication if needed, healing dinner with anti-inflammatory foods", type: "medication" },
+              { time: "20:00", activity: "Gentle stretching routine and relaxation exercises", type: "exercise" },
+              { time: "21:00", activity: "Sleep preparation: chamomile tea, gratitude journaling, room preparation", type: "wellness" }
             ],
             preventionTips: [
-              "Maintain consistent healthy lifestyle habits",
-              "Regular exercise routine (150 min/week)",
-              "Effective stress management techniques",
-              "Adequate sleep hygiene (7-9 hours nightly)"
+              "Maintain consistent healthy lifestyle habits: Establish daily routines including same wake/sleep times, regular meal schedules, consistent exercise timing, and weekly meal prep to ensure nutritional consistency",
+              "Comprehensive exercise routine: 150 minutes moderate-intensity cardio weekly (30 min x 5 days), 2-3 strength training sessions, daily flexibility work, and weekly balance/coordination activities",
+              "Advanced stress management: Daily meditation practice (minimum 10 minutes), weekly stress assessment and adjustment, monthly stress management technique evaluation, and quarterly lifestyle stress audit",
+              "Optimal sleep hygiene protocol: 7-9 hours nightly sleep, consistent bedtime routine starting 1 hour before sleep, bedroom environment optimization (temperature, lighting, noise), and sleep quality tracking"
             ],
             possibleCauses: [
-              "Lifestyle factors and dietary choices",
-              "Environmental triggers and allergens",
-              "Genetic predisposition and family history",
-              "Previous injuries or underlying conditions"
+              "Lifestyle factors and dietary choices: Poor nutrition (high processed foods, sugar, trans fats), sedentary lifestyle, irregular sleep patterns, chronic stress, excessive alcohol consumption, smoking, and inadequate hydration",
+              "Environmental triggers and allergens: Air pollution exposure, household chemical irritants, seasonal allergens (pollen, mold), food sensitivities, electromagnetic field exposure, and workplace toxins",
+              "Genetic predisposition and family history: Inherited inflammatory conditions, autoimmune tendencies, metabolic disorders, cardiovascular risk factors, and genetic variations affecting nutrient absorption",
+              "Previous injuries or underlying conditions: Past physical trauma, chronic infections, hormonal imbalances, digestive disorders, previous medication side effects, and accumulated oxidative stress damage"
             ]
           });
           setIsGenerating(false);

@@ -141,33 +141,42 @@ const StartConsultation: React.FC = () => {
           setDiagnosis({
             condition: 'Common Cold (Demo)',
             confidence: 85,
-            description: 'Demo analysis - Configure OpenAI API key in environment variables for real AI analysis.',
+            description: 'Demo analysis - Configure OpenAI API key in environment variables for real AI analysis. Based on your symptoms, this appears to be a viral upper respiratory infection commonly known as the common cold. The condition typically affects the nose, throat, and sinuses, causing inflammation and increased mucus production.',
             naturalRemedies: [
-              'Rest and adequate sleep',
-              'Drink warm fluids',
-              'Use honey for sore throat',
-              'Apply warm compress',
-              'Practice deep breathing'
+              'Complete bed rest for 8-10 hours daily, especially during the first 3 days of illness to allow your immune system to fight the infection effectively',
+              'Drink 8-10 glasses of warm fluids daily including herbal teas (chamomile, ginger, echinacea), warm water with lemon and honey, and clear broths to maintain hydration and soothe throat irritation',
+              'Raw honey (1-2 tablespoons) taken directly or mixed in warm tea every 4-6 hours for its antimicrobial and throat-soothing properties - do not give to children under 1 year',
+              'Apply warm compress to forehead and nose for 10-15 minutes, 3-4 times daily to relieve sinus pressure and congestion',
+              'Practice deep breathing exercises and steam inhalation (10 minutes over hot water with eucalyptus oil) twice daily to clear nasal passages',
+              'Gargle with warm salt water (1/2 teaspoon salt in 8 oz warm water) every 2-3 hours to reduce throat inflammation and kill bacteria'
             ],
             foods: [
-              'Chicken soup with vegetables',
-              'Citrus fruits for Vitamin C',
-              'Ginger tea for inflammation',
-              'Garlic for immune support',
-              'Leafy greens for nutrients'
+              'Homemade chicken soup with carrots, celery, onions, and garlic - consume 1-2 bowls daily for hydration, electrolytes, and anti-inflammatory compounds that help reduce cold symptoms',
+              'Fresh citrus fruits: 2-3 oranges, 1 grapefruit, or 1 cup fresh lemon juice daily to provide 200-500mg Vitamin C for immune system support',
+              'Fresh ginger tea: steep 1-inch piece of fresh ginger in hot water for 10 minutes, add honey and lemon, drink 3-4 cups daily for anti-inflammatory and antiviral effects',
+              'Raw garlic: 2-3 fresh cloves daily (crushed and mixed with honey or added to food) for allicin compound that has antimicrobial properties',
+              'Dark leafy greens (spinach, kale): 2-3 servings daily for vitamins A, C, and folate to support immune function',
+              'Probiotic-rich foods: 1 cup plain yogurt or kefir daily to support gut health and immune system',
+              'Warm bone broth: 2-3 cups daily for minerals, collagen, and easy-to-digest nutrients'
             ],
             medications: [
-              'Paracetamol for fever and pain',
-              'Throat lozenges for sore throat',
-              'Saline nasal spray for congestion'
+              'Paracetamol (Acetaminophen): 500-1000mg every 6-8 hours (maximum 4000mg per day) for fever reduction and pain relief - take with food to prevent stomach irritation',
+              'Ibuprofen: 200-400mg every 6-8 hours (maximum 1200mg per day) for inflammation and pain - take with food, avoid if you have stomach ulcers or kidney problems',
+              'Throat lozenges with menthol or benzocaine: 1 lozenge every 2-3 hours as needed for throat pain relief - do not exceed 8 lozenges per day',
+              'Saline nasal spray: 2-3 sprays in each nostril every 4-6 hours to moisturize nasal passages and reduce congestion',
+              'Decongestant nasal spray (oxymetazoline): 2-3 sprays per nostril twice daily for maximum 3 days only to prevent rebound congestion',
+              'Cough suppressant (dextromethorphan): 15-30mg every 4-6 hours for dry cough - do not exceed 120mg per day'
             ],
             administration: [
-              'Take medications with food',
-              'Drink plenty of fluids',
-              'Get adequate rest',
-              'Monitor symptoms'
+              'Take all oral medications with food or milk to prevent stomach upset and improve absorption',
+              'Maintain fluid intake of at least 8-10 glasses of water daily, increasing to 12 glasses if fever is present',
+              'Get 8-10 hours of sleep per night and take 2-3 short naps during the day for the first 3-5 days',
+              'Monitor body temperature every 4-6 hours and record symptoms in a diary to track improvement',
+              'Space medications at least 4 hours apart unless specifically directed otherwise by healthcare provider',
+              'Use a humidifier in bedroom (40-50% humidity) to ease breathing and prevent nasal dryness',
+              'Avoid alcohol and smoking completely during illness as they can worsen symptoms and delay recovery'
             ],
-            warning: 'This is demo content. Seek medical attention if symptoms worsen.'
+            warning: 'This is demo content. Seek immediate medical attention if you experience: fever above 103°F (39.4°C), difficulty breathing or shortness of breath, severe headache with neck stiffness, persistent vomiting, symptoms lasting more than 10 days, or if you have underlying health conditions like asthma, diabetes, or heart disease. Always consult healthcare professionals before starting any new medications.'
           });
           setIsAnalyzing(false);
         }, 4000);
