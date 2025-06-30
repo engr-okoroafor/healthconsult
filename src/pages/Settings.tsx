@@ -533,7 +533,7 @@ const Settings: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         API Provider
                       </label>
-                      <select 
+                      <select  
                         value={aiSettings.apiProvider}
                         onChange={(e) => handleProviderChange(e.target.value)}
                         className="w-full p-3 bg-white/70 border-2 border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-primary/30 focus:border-medical-primary transition-colors text-gray-800"
@@ -542,6 +542,7 @@ const Settings: React.FC = () => {
                         <option value="openai" className="text-gray-800">OpenAI API</option>
                       </select>
                     </div>
+                    
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         {aiSettings.apiProvider === 'gemini' ? 'Gemini' : 'OpenAI'} API Key

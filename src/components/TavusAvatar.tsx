@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Video, VideoOff, Mic, MicOff, Phone, PhoneOff, Loader, AlertCircle, Activity, Heart, Brain, Stethoscope, Zap } from 'lucide-react';
+import { Video, VideoOff, Mic, MicOff, Phone, PhoneOff, Loader, AlertCircle, Activity, Heart, Brain, Stethoscope, X } from 'lucide-react';
 import { tavusService } from '../services/tavusService';
 
 interface Doctor {
@@ -194,8 +194,8 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
           backgroundImage: `
-            linear-gradient(rgba(34, 211, 238, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(34, 211, 238, 0.1) 1px, transparent 1px)
+            linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px)
           `,
           backgroundSize: '20px 20px'
         }}></div>
@@ -264,9 +264,7 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
       {/* Main Video Interface */}
       <div className="relative aspect-video bg-gradient-to-br from-slate-900 to-blue-900 overflow-hidden">
         {/* Holographic Scan Lines */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/5 to-transparent animate-pulse"></div>
-        </div>
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-cyan-400/5 to-transparent opacity-50"></div>
 
         {!isConnected && !isConnecting && (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -276,7 +274,7 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
                 animate={{ 
                   boxShadow: [
                     "0 0 20px rgba(34, 211, 238, 0.5)",
-                    "0 0 40px rgba(34, 211, 238, 0.8)",
+                    "0 0 30px rgba(34, 211, 238, 0.7)",
                     "0 0 20px rgba(34, 211, 238, 0.5)"
                   ]
                 }}
@@ -308,7 +306,7 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
               <motion.button
                 onClick={startConversation}
                 disabled={isConnecting}
-                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-full flex items-center justify-center space-x-3 transition-all duration-300 shadow-lg shadow-cyan-500/30 font-medium"
+                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-xl flex items-center justify-center space-x-3 transition-all duration-300 shadow-lg shadow-cyan-500/30 font-medium"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -357,7 +355,7 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
             {avatarUrl ? (
               <video
                 ref={videoRef}
-                src={avatarUrl}
+                src={avatarUrl || ''}
                 className="w-full h-full object-cover"
                 autoPlay
                 muted={isMuted}
@@ -366,7 +364,7 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
             ) : (
               <div className="w-full h-full flex items-center justify-center relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 via-transparent to-blue-400/10 animate-pulse"></div>
-                <div className="text-center z-10">
+                <div className="text-center z-10 p-6">
                   <motion.div
                     className="text-8xl mb-6 filter drop-shadow-2xl"
                     animate={{ 
@@ -382,7 +380,7 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
                   </motion.div>
                   <p className="text-cyan-400 font-mono text-lg mb-2">Medical AI Avatar Online</p>
                   <div className="flex justify-center space-x-2">
-                    <Zap className="h-4 w-4 text-yellow-400 animate-pulse" />
+                    <Activity className="h-4 w-4 text-yellow-400 animate-pulse" />
                     <span className="text-yellow-400 text-sm">Neural Processing Active</span>
                   </div>
                 </div>
@@ -392,13 +390,9 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
             {!isVideoEnabled && (
               <div className="absolute inset-0 bg-slate-900/90 backdrop-blur-sm flex items-center justify-center">
                 <div className="text-center">
-                  <motion.div
-                    className="text-6xl mb-4 filter drop-shadow-lg"
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
+                  <div className="text-6xl mb-4 filter drop-shadow-lg">
                     {doctor.icon}
-                  </motion.div>
+                  </div>
                   <p className="text-cyan-400 font-mono text-sm">Video Disabled - Audio Only</p>
                 </div>
               </div>
@@ -407,13 +401,13 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
             {/* Medical HUD Overlay */}
             <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none">
               <div className="bg-slate-900/80 backdrop-blur-sm border border-cyan-400/30 rounded-lg p-3">
-                <div className="flex items-center space-x-2 text-xs text-cyan-400">
+                <div className="flex items-center space-x-2 text-xs text-cyan-300">
                   <Activity className="h-3 w-3" />
                   <span>VITAL SIGNS MONITORING</span>
                 </div>
               </div>
               <div className="bg-slate-900/80 backdrop-blur-sm border border-green-400/30 rounded-lg p-3">
-                <div className="flex items-center space-x-2 text-xs text-green-400">
+                <div className="flex items-center space-x-2 text-xs text-green-300">
                   <Brain className="h-3 w-3" />
                   <span>AI ANALYSIS ACTIVE</span>
                 </div>
@@ -423,7 +417,7 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
             {/* Enhanced Controls */}
             <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center space-x-4">
               <motion.button
-                onClick={() => setIsMuted(!isMuted)}
+                onClick={() => setIsMuted(!isMuted)} 
                 className={`p-4 rounded-full transition-all duration-300 backdrop-blur-sm border ${
                   isMuted 
                     ? 'bg-red-500/80 border-red-400 hover:bg-red-400/80' 
@@ -449,13 +443,17 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
               </motion.button>
               
               <motion.button
-                onClick={endConversation}
+                onClick={() => {
+                  if (window.confirm('Are you sure you want to end this conversation?')) {
+                    endConversation();
+                  }
+                }}
                 disabled={isConnecting}
                 className="p-4 rounded-full bg-red-500/80 hover:bg-red-400/80 border border-red-400 text-white transition-all duration-300 backdrop-blur-sm shadow-lg"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <PhoneOff className="h-5 w-5" />
+                <X className="h-5 w-5" />
               </motion.button>
             </div>
           </>
@@ -465,7 +463,7 @@ const TavusAvatar: React.FC<TavusAvatarProps> = ({
       {/* Error Display with Medical Styling */}
       {error && (
         <motion.div 
-          className="p-4 bg-red-900/50 border-t border-red-500/50 backdrop-blur-sm"
+          className="p-4 bg-red-900/70 border-t border-red-500/50 backdrop-blur-sm"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >

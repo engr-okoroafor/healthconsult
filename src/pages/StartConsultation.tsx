@@ -25,6 +25,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { aiService } from '../services/aiService';
 import { tavusService } from '../services/tavusService';
+import { geminiService } from '../services/geminiService';
 import TavusAvatar from '../components/TavusAvatar';
 import DoctorSelector from '../components/DoctorSelector';
 import toast from 'react-hot-toast';
@@ -125,8 +126,8 @@ const StartConsultation: React.FC = () => {
     setIsAnalyzing(true);
     
     try {
-      if (aiService.isConfigured()) {
-        const result = await aiService.generateSymptomDiagnosis(
+      if (geminiService.isConfigured()) {
+        const result = await geminiService.generateSymptomDiagnosis(
           symptoms,
           selectedBodyParts,
           severity || 'moderate',
@@ -272,14 +273,14 @@ const StartConsultation: React.FC = () => {
     try {
       const { error } = await supabase
         .from('consultations')
-        .insert({
+        .insert([{
           user_id: user?.id,
           doctor_id: selectedDoctor?.id,
           doctor_type: selectedDoctor?.specialty || 'General Physician',
           symptoms: symptoms || 'General consultation',
           tavus_conversation_id: conversationId,
           status: 'active'
-        });
+        }]);
 
       if (error) throw error;
     } catch (error) {
@@ -318,14 +319,14 @@ const StartConsultation: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.5 }} 
       >
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Start Consultation</h1>
         <p className="text-gray-600">Connect with AI medical specialists for personalized health consultations and treatment recommendations.</p>
-        {!aiService.isConfigured() && (
+        {!geminiService.isConfigured() && (
           <div className="mt-2 p-3 bg-yellow-100 border-2 border-yellow-300 rounded-lg">
             <p className="text-sm text-yellow-800">
-              <strong>Demo Mode:</strong> Configure OpenAI API key in environment variables for real AI analysis.
+              <strong>Demo Mode:</strong> Configure Gemini API key in environment variables for real AI analysis.
             </p>
           </div>
         )}
@@ -481,7 +482,7 @@ const StartConsultation: React.FC = () => {
             {isAnalyzing ? (
               <>
                 <Loader className="animate-spin h-4 w-4 mr-2" />
-                {aiService.isConfigured() ? 'AI Analyzing Symptoms...' : 'Generating Demo Analysis...'}
+                {geminiService.isConfigured() ? 'AI Analyzing Symptoms...' : 'Generating Demo Analysis...'}
               </>
             ) : (
               <>
