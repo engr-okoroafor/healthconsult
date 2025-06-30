@@ -2,13 +2,13 @@ class AIService {
   private getApiKey(): string | null {
     // Check environment variable first
     const envKey = import.meta.env.VITE_OPENAI_API_KEY;
-    if (envKey && envKey.trim() && envKey.length > 10) {
+    if (envKey && envKey.trim()) {
       return envKey.trim();
     }
     
     // Fallback to localStorage (for settings override)
     const storedKey = localStorage.getItem('openai_api_key');
-    if (storedKey && storedKey.trim() && storedKey.length > 10) {
+    if (storedKey && storedKey.trim()) {
       return storedKey.trim();
     }
     
@@ -158,6 +158,12 @@ Format as JSON:
   async generateSymptomDiagnosis(symptoms: string, bodyParts: string[], severity: string, duration: string, doctorSpecialty: string = 'General Physician'): Promise<any> {
     const systemPrompt = `You are a ${doctorSpecialty} AI assistant. Provide comprehensive medical analysis tailored to your specialty.`;
     
+    // Check if API key is configured
+    if (!this.isConfigured()) {
+      console.log("Using demo content - OpenAI API key not configured");
+      return this.parseTextResponse('');
+    }
+    
     const prompt = `
 As a ${doctorSpecialty}, analyze these symptoms and provide a comprehensive diagnosis:
 
@@ -207,6 +213,12 @@ Format as JSON:
 
   async generateTreatmentPlan(condition: string, severity: string, doctorSpecialty: string = 'General Physician'): Promise<any> {
     const systemPrompt = `You are a ${doctorSpecialty} AI assistant. Create comprehensive treatment plans tailored to your specialty.`;
+    
+    // Check if API key is configured
+    if (!this.isConfigured()) {
+      console.log("Using demo content - OpenAI API key not configured");
+      return this.parseTreatmentResponse('');
+    }
     
     const prompt = `
 As a ${doctorSpecialty}, create a comprehensive treatment plan for: ${condition} (${severity} severity)
@@ -259,6 +271,12 @@ Format as JSON:
 
   async generateHealthArticle(topic: string, doctorSpecialty: string = 'General Physician'): Promise<any> {
     const systemPrompt = `You are a ${doctorSpecialty} AI assistant. Write comprehensive health education content from your specialty perspective.`;
+    
+    // Check if API key is configured
+    if (!this.isConfigured()) {
+      console.log("Using demo content - OpenAI API key not configured");
+      return this.parseArticleResponse('', topic);
+    }
     
     const prompt = `
 As a ${doctorSpecialty}, write a comprehensive health education article about: ${topic}
@@ -574,7 +592,7 @@ Format as JSON:
 
   isConfigured(): boolean {
     const apiKey = this.getApiKey();
-    return !!apiKey && apiKey.length > 10;
+    return !!apiKey;
   }
 }
 
