@@ -115,7 +115,7 @@ const PhotoDiagnosis: React.FC = () => {
         .from('consultations')
         .insert({
           user_id: user?.id,
-          doctor_id: selectedDoctor?.id,
+          doctor_id: selectedDoctor?.tavus_replica_id,
           doctor_type: selectedDoctor?.specialty || 'Radiologist',
           symptoms: `Image analysis consultation for ${selectedBodyPart || 'unknown body part'}`,
           tavus_conversation_id: conversationId,
